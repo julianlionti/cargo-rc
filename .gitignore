@@ -1,0 +1,61 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# pnpm
+.pnpm/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts
+
+# Storybook
+storybook-static/
+node_modules/.cache/
+
+# Playwright
+*.trace
+*.snapshot
+test-results/
+
+# Logs
+logs/
+*.log
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Monorepo Lockfiles (optional, but useful in some cases)
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build artifacts
+/dist
+/build
+
+# Coverage
+coverage/
+
+# IDE & Editor folders
+.idea/
+
+# Temporary files
+*.swp
+*.swo
+
+.turbo
