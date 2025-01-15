@@ -7,9 +7,9 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
-      name: "Config",
+      name: "Utils",
       // the proper extensions will be added
-      fileName: "config",
+      fileName: "utils",
     },
     rollupOptions: {
       // make sure to externalize deps that shouldn't be bundled

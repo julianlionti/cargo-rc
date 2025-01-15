@@ -8,17 +8,17 @@
   ],
   "main": "./dist/config.umd.cjs",
   "module": "./dist/config.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/config.js",
       "require": "./dist/config.umd.cjs"
     }
   },
   "scripts": {
-    "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "lint": "eslint ."
   },
   "dependencies": {},
   "devDependencies": {

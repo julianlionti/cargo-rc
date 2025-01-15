@@ -8,8 +8,10 @@
   ],
   "main": "./dist/utils.umd.cjs",
   "module": "./dist/utils.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/utils.js",
       "require": "./dist/utils.umd.cjs"
     }
