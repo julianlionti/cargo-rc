@@ -59,7 +59,7 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
 
 /**
  * @swagger
- * /api/cargo:
+ * /api/cargos:
  *   post:
  *     summary: Create a new cargo
  *     tags: [Cargos]
