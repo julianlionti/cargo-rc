@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio"
   },
   "dependencies": {
     "@config": "workspace:*",
@@ -15,6 +17,7 @@
     "@mui/material": "^6.4.0",
     "@mui/material-nextjs": "^6.3.1",
     "@mui/styles": "^6.4.0",
+    "@prisma/client": "^6.2.1",
     "@types": "workspace:*",
     "@ui": "workspace:*",
     "@utils": "workspace:*",
@@ -24,15 +27,20 @@
     "next-i18n-router": "^5.5.1",
     "next-i18next": "^15.4.1",
     "next-intl": "^3.26.3",
+    "next-swagger-doc": "^0.4.1",
+    "prisma": "^6.2.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "react-i18next": "^15.4.0"
+    "react-i18next": "^15.4.0",
+    "swagger-ui-react": "^5.18.2",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/swagger-ui-react": "^4.18.3",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
     "typescript": "catalog:"
