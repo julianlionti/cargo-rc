@@ -1,14 +1,35 @@
 // apps/web/pages/index.tsx
-import { Box, Button, Container, Grid2, Typography } from "@mui/material";
-import { indigo } from "@mui/material/colors";
-import Header from "rc/components/shared/Header";
 
-export default function Home() {
+import { Box, Container, Grid2, Typography, Button } from "@mui/material";
+import { indigo } from "@mui/material/colors";
+import { getTranslations } from "next-intl/server";
+import Header from "rc/components/shared/Header";
+import { appConfig } from "@config";
+import Footer from "rc/components/shared/Footer";
+
+export default async function Home() {
+  const t = await getTranslations();
+
+  const features = [
+    {
+      title: t("features.delivery.title"),
+      description: t("features.delivery.description"),
+    },
+    {
+      title: t("features.tracking.title"),
+      description: t("features.tracking.description"),
+    },
+    {
+      title: t("features.support.title"),
+      description: t("features.support.description"),
+    },
+  ];
+
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       {/* Header */}
       <Header
-        title="Cargo RC"
+        title={appConfig.appName}
         buttons={[
           { title: "Contacts", to: "contacts" },
           { title: "Features", to: "features" },
@@ -19,23 +40,38 @@ export default function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundImage: 'url("/path/to/hero-image.jpg")',
+          backgroundImage: 'url("/hero-truck.webp")',
           backgroundSize: "cover",
           backgroundPosition: "center",
           padding: "100px 0",
           color: "white",
+          position: "relative", // Needed to position the overlay
+          overflow: "hidden", // Ensures no child elements extend beyond this box
         }}
       >
-        <Container>
+        {/* Overlay */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)", // Semi-transparent black overlay
+            zIndex: 1,
+          }}
+        />
+        {/* Content */}
+        <Container sx={{ position: "relative", zIndex: 2 }}>
           <Grid2 container direction="column" alignItems="center">
             <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              Reliable Cargo Transportation for Your Business
+              {t("hero.title")}
             </Typography>
             <Typography variant="h6" sx={{ mb: 4 }}>
-              Efficient, fast, and secure delivery at your fingertips.
+              {t("hero.subtitle")}
             </Typography>
             <Button variant="contained" color="secondary">
-              Get Started
+              {t("hero.cta")}
             </Button>
           </Grid2>
         </Container>
@@ -45,66 +81,27 @@ export default function Home() {
       <Box sx={{ padding: "80px 0", backgroundColor: "#f4f4f4" }}>
         <Container>
           <Typography variant="h3" align="center" sx={{ mb: 4 }}>
-            Key Features
+            {t("features.title")}
           </Typography>
           <Grid2 container spacing={4}>
-            <Grid2 size={{ md: 4, xs: 12 }}>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  padding: 2,
-                  backgroundColor: "white",
-                  boxShadow: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  Fast Delivery
-                </Typography>
-                <Typography variant="body1">
-                  Get your cargo delivered in the shortest time possible with
-                  our optimized routes.
-                </Typography>
-              </Box>
-            </Grid2>
-            <Grid2 size={{ md: 4, xs: 12 }}>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  padding: 2,
-                  backgroundColor: "white",
-                  boxShadow: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  Secure Tracking
-                </Typography>
-                <Typography variant="body1">
-                  Track your cargo in real-time and stay updated on its
-                  location.
-                </Typography>
-              </Box>
-            </Grid2>
-            <Grid2 size={{ md: 4, xs: 12 }}>
-              <Box
-                sx={{
-                  textAlign: "center",
-                  padding: 2,
-                  backgroundColor: "white",
-                  boxShadow: 2,
-                  borderRadius: 2,
-                }}
-              >
-                <Typography variant="h5" sx={{ mb: 2 }}>
-                  24/7 Support
-                </Typography>
-                <Typography variant="body1">
-                  Our team is available around the clock to assist with any
-                  issues or inquiries.
-                </Typography>
-              </Box>
-            </Grid2>
+            {features.map((feature) => (
+              <Grid2 key={feature.title} size={{ md: 4, xs: 12 }}>
+                <Box
+                  sx={{
+                    textAlign: "center",
+                    padding: 2,
+                    backgroundColor: "white",
+                    boxShadow: 2,
+                    borderRadius: 2,
+                  }}
+                >
+                  <Typography variant="h5" sx={{ mb: 2 }}>
+                    {feature.title}
+                  </Typography>
+                  <Typography variant="body1">{feature.description}</Typography>
+                </Box>
+              </Grid2>
+            ))}
           </Grid2>
         </Container>
       </Box>
@@ -116,36 +113,20 @@ export default function Home() {
         <Container>
           <Grid2 container direction="column" alignItems="center">
             <Typography variant="h4" sx={{ mb: 2 }}>
-              Ready to Ship Your Cargo?
+              {t("cta.title")}
             </Typography>
             <Typography variant="h6" sx={{ mb: 4 }}>
-              Sign up today and get started with our cargo transportation
-              service.
+              {t("cta.subtitle")}
             </Typography>
             <Button variant="contained" color="secondary">
-              Sign Up Now
+              {t("cta.cta")}
             </Button>
           </Grid2>
         </Container>
       </Box>
 
       {/* Footer */}
-      <Box
-        sx={{
-          backgroundColor: indigo[600],
-          color: "white",
-          padding: "20px 0",
-          position: "fixed",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="body2">
-          &copy; {new Date().getFullYear()} Cargo RC. All rights reserved.
-        </Typography>
-      </Box>
+      <Footer />
     </Box>
   );
 }

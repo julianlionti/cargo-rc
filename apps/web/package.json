@@ -23,6 +23,7 @@
     "next": "15.1.4",
     "next-i18n-router": "^5.5.1",
     "next-i18next": "^15.4.1",
+    "next-intl": "^3.26.3",
     "react": "catalog:",
     "react-dom": "catalog:",
     "react-i18next": "^15.4.0"

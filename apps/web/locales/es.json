@@ -1,0 +1,32 @@
+{
+  "hero": {
+    "title": "Transporte de Carga Confiable para tu Negocio",
+    "subtitle": "Entrega eficiente, rápida y segura al alcance de tu mano.",
+    "cta": "Comienza Ahora"
+  },
+  "cta": {
+    "title": "¿Listo para comenzar?",
+    "subtitle": "Regístrate hoy y comienza con nuestro servicio de transporte de carga.",
+    "cta": "Regístrate Ahora"
+  },
+  "features": {
+    "title": "Características",
+    "delivery": {
+      "title": "Entrega Rápida",
+      "description": "Recibe tu carga en el menor tiempo posible con nuestras rutas optimizadas."
+    },
+    "tracking": {
+      "title": "Seguimiento Seguro",
+      "description": "Rastrea tu carga en tiempo real y mantente actualizado sobre su ubicación."
+    },
+    "support": {
+      "title": "Soporte 24/7",
+      "description": "Nuestro equipo está disponible las 24 horas del día para ayudarte con cualquier problema o consulta."
+    }
+  },
+  "welcome": "Bienvenido a Cargo RC",
+  "dashboard": "Tablero",
+  "settings": "Configuración",
+  "users": "Usuarios",
+  "signUp": "Regístrate Ahora"
+}

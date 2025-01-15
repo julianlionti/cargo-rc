@@ -10,6 +10,7 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
+  
   return (
     <AppRouterCacheProvider>
       <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>

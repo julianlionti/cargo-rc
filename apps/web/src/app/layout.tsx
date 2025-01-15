@@ -1,6 +1,8 @@
 import { appConfig } from "@config";
 import { CssBaseline } from "@mui/material";
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import { Roboto } from "next/font/google";
 import Providers from "rc/components/Providers";
 
@@ -16,17 +18,22 @@ export const metadata: Metadata = {
   description: "Rosendin",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body className={`${roboto.variable}`}>
         <Providers>
           <CssBaseline />
-          {children}
+          <NextIntlClientProvider messages={messages}>
+            {children}
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>

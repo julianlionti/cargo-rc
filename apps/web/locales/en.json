@@ -1,0 +1,32 @@
+{
+  "hero": {
+    "title": "Reliable Cargo Transportation for Your Business",
+    "subtitle": "Efficient, fast, and secure delivery at your fingertips.",
+    "cta": "Get Started"
+  },
+  "cta": {
+    "title": "Ready to get started?",
+    "subtitle": "Sign up today and get started with our cargo transportation service.",
+    "cta": "Sign Up Now"
+  },
+  "features": {
+    "title": "Features",
+    "delivery": {
+      "title": "Fast Delivery",
+      "description": "Get your cargo delivered in the shortest time possible with our optimized routes."
+    },
+    "tracking": {
+      "title": "Secure Tracking",
+      "description": "Track your cargo in real-time and stay updated on its location."
+    },
+    "support": {
+      "title": "24/7 Support",
+      "description": "Our team is available around the clock to assist with any issues or inquiries."
+    }
+  },
+  "welcome": "Welcome to Cargo RC",
+  "dashboard": "Dashboard",
+  "settings": "Settings",
+  "users": "Users",
+  "signUp": "Sign Up Now"
+}
