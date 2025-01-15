@@ -1,33 +1,39 @@
 {
   "name": "web",
+  "version": "0.1.0",
   "private": true,
-  "version": "0.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
+    "@config": "workspace:*",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.0",
+    "@mui/material-nextjs": "^6.3.1",
+    "@mui/styles": "^6.4.0",
+    "@types": "workspace:*",
+    "@ui": "workspace:*",
+    "@utils": "workspace:*",
+    "i18next": "^24.2.1",
+    "i18next-resources-to-backend": "^1.2.1",
+    "next": "15.1.4",
+    "next-i18n-router": "^5.5.1",
+    "next-i18next": "^15.4.1",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "@ui": "workspace:*",
-    "@config": "workspace:*",
-    "@utils": "workspace:*",
-    "@types": "workspace:*"
+    "react-i18next": "^15.4.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@types/react": "^19.0.7",
-    "@types/react-dom": "^19.0.3",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^9.17.0",
-    "eslint-plugin-react-hooks": "^5.0.0",
-    "eslint-plugin-react-refresh": "^0.4.16",
-    "globals": "^15.14.0",
-    "typescript": "catalog:",
-    "typescript-eslint": "catalog:",
-    "vite": "catalog:"
+    "@eslint/eslintrc": "^3",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.4",
+    "typescript": "catalog:"
   }
 }

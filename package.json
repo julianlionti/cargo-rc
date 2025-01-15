@@ -6,7 +6,9 @@
   "scripts": {
     "dev:web": "pnpm --filter web dev",
     "dev:mobile": "pnpm --filter mobile start",
+    "dev:all": "turbo run dev",
     "build:all": "turbo run build",
+    "build:ui": "pnpm --filter @ui build",
     "lint": "turbo run lint",
     "test": "turbo run test"
   },

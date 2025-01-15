@@ -17,12 +17,15 @@
     }
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "vite build --watch",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/material": "^6.4.0",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
