@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,21 +10,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CargoStatus {
+  AVAILABLE
+  IN_TRANSIT
+  DELIVERED
+  PICKED_UP
+  CANCELLED
+}
+
+enum CargoSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+enum CargoUrgency {
+  LOW
+  MEDIUM
+  HIGH
+}
+
 model Cargo {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   origin      String
   destination String
   weight      Float
-  company     String
+  reward      Float // Track the reward
+  size        CargoSize // Enum for size (small, medium, large)
+  urgency     CargoUrgency // Enum for urgency (low, medium, high)
 
-  assignedTo   Driver? @relation(fields: [assignedToId], references: [id])
-  assignedToId String? @db.ObjectId
+  company String
+
+  originLat Float // Latitude for the origin location
+  originLng Float // Longitude for the origin location
+
+  destinationLat Float // Latitude for the destination location
+  destinationLng Float // Longitude for the destination location
+
+  assignedTo   Driver?     @relation(fields: [assignedToId], references: [id])
+  assignedToId String?     @db.ObjectId
+  status       CargoStatus // Enum for cargo status
 }
 
 model Driver {
   id             String  @id @default(auto()) @map("_id") @db.ObjectId
   name           String
   email          String  @unique
-  assignedCargos Cargo[]
+  assignedCargos Cargo[] // Relates the driver to the cargos they are assigned to
 }

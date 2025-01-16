@@ -27,7 +27,7 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                 type: object
  *                 properties:
  *                   id:
- *                     type: integer
+ *                     type: string
  *                     description: The unique identifier for the cargo.
  *                   title:
  *                     type: string
@@ -45,6 +45,34 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                   company:
  *                     type: string
  *                     description: The company handling the cargo.
+ *                   size:
+ *                     type: string
+ *                     enum: [SMALL, MEDIUM, LARGE]
+ *                     description: The size of the cargo.
+ *                   urgency:
+ *                     type: string
+ *                     enum: [LOW, MEDIUM, HIGH]
+ *                     description: The urgency of the cargo.
+ *                   status:
+ *                     type: string
+ *                     enum: [AVAILABLE, IN_TRANSIT, DELIVERED, PICKED_UP, CANCELLED]
+ *                     description: The status of the cargo.
+ *                   originLat:
+ *                     type: number
+ *                     format: float
+ *                     description: Latitude of the origin.
+ *                   originLng:
+ *                     type: number
+ *                     format: float
+ *                     description: Longitude of the origin.
+ *                   destinationLat:
+ *                     type: number
+ *                     format: float
+ *                     description: Latitude of the destination.
+ *                   destinationLng:
+ *                     type: number
+ *                     format: float
+ *                     description: Longitude of the destination.
  *       500:
  *         description: Failed to fetch cargos
  *         content:
@@ -88,10 +116,45 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                 format: float
  *                 description: The weight of the cargo.
  *                 example: 1500.5
+ *               reward:
+ *                 type: number
+ *                 format: float
+ *                 description: The reward of the cargo.
+ *                 example: 1505000
  *               company:
  *                 type: string
  *                 description: The company handling the cargo.
  *                 example: "ABC Corp"
+ *               size:
+ *                 type: string
+ *                 enum: [SMALL, MEDIUM, LARGE]
+ *                 description: The size of the cargo.
+ *                 example: "LARGE"
+ *               urgency:
+ *                 type: string
+ *                 enum: [LOW, MEDIUM, HIGH]
+ *                 description: The urgency of the cargo.
+ *                 example: "HIGH"
+ *               originLat:
+ *                 type: number
+ *                 format: float
+ *                 description: Latitude of the origin.
+ *                 example: 40.7128
+ *               originLng:
+ *                 type: number
+ *                 format: float
+ *                 description: Longitude of the origin.
+ *                 example: -74.0060
+ *               destinationLat:
+ *                 type: number
+ *                 format: float
+ *                 description: Latitude of the destination.
+ *                 example: 34.0522
+ *               destinationLng:
+ *                 type: number
+ *                 format: float
+ *                 description: Longitude of the destination.
+ *                 example: -118.2437
  *     responses:
  *       201:
  *         description: Cargo created successfully
@@ -101,7 +164,7 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *               type: object
  *               properties:
  *                 id:
- *                   type: integer
+ *                   type: string
  *                   description: The unique identifier for the cargo.
  *                 title:
  *                   type: string
@@ -119,6 +182,34 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                 company:
  *                   type: string
  *                   description: The company handling the cargo.
+ *                 size:
+ *                   type: string
+ *                   enum: [SMALL, MEDIUM, LARGE]
+ *                   description: The size of the cargo.
+ *                 urgency:
+ *                   type: string
+ *                   enum: [LOW, MEDIUM, HIGH]
+ *                   description: The urgency of the cargo.
+ *                 status:
+ *                   type: string
+ *                   enum: [AVAILABLE, IN_TRANSIT, DELIVERED, PICKED_UP, CANCELLED]
+ *                   description: The status of the cargo.
+ *                 originLat:
+ *                   type: number
+ *                   format: float
+ *                   description: Latitude of the origin.
+ *                 originLng:
+ *                   type: number
+ *                   format: float
+ *                   description: Longitude of the origin.
+ *                 destinationLat:
+ *                   type: number
+ *                   format: float
+ *                   description: Latitude of the destination.
+ *                 destinationLng:
+ *                   type: number
+ *                   format: float
+ *                   description: Longitude of the destination.
  *       400:
  *         description: Failed to create cargo
  *         content:
@@ -154,12 +245,42 @@ export default async function handler(
     }
   } else if (req.method === "POST") {
     try {
-      const { title, origin, destination, weight, company } = req.body;
+      const {
+        title,
+        origin,
+        destination,
+        weight,
+        company,
+        reward,
+        size,
+        urgency,
+        originLat,
+        originLng,
+        destinationLat,
+        destinationLng,
+      } = req.body;
+
       const newCargo = await prisma.cargo.create({
-        data: { title, origin, destination, weight, company },
+        data: {
+          title,
+          origin,
+          destination,
+          weight,
+          company,
+          size,
+          urgency,
+          reward,
+          originLat,
+          originLng,
+          destinationLat,
+          destinationLng,
+          status: "AVAILABLE", // Default status
+        },
       });
+
       res.status(201).json(newCargo);
     } catch (error) {
+      console.log(error);
       res.status(400).json({ error: "Failed to create cargo" });
     }
   } else {

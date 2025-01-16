@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "rc/lib/db";
+import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
 
 /**
  * @swagger
@@ -132,6 +132,11 @@ import prisma from "rc/lib/db";
  *                   type: number
  *                   format: float
  *                   description: The weight of the cargo.
+ *               reward:
+ *                 type: number
+ *                 format: float
+ *                 description: The reward of the cargo.
+ *                 example: 1505000
  *                 company:
  *                   type: string
  *                   description: The company handling the cargo.
@@ -204,7 +209,7 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       const cargo = await prisma.cargo.findUnique({
-        where: { id: id as string },
+        where: { id: id as string }, // Ensure the id is treated as a number
       });
       if (!cargo) return res.status(404).json({ error: "Cargo not found" });
       res.status(200).json(cargo);
@@ -214,7 +219,7 @@ export default async function handler(
   } else if (req.method === "PUT") {
     try {
       const updatedCargo = await prisma.cargo.update({
-        where: { id: id as string },
+        where: { id: id as string }, // Ensure the id is treated as a number
         data: req.body,
       });
       res.status(200).json(updatedCargo);
@@ -223,7 +228,7 @@ export default async function handler(
     }
   } else if (req.method === "DELETE") {
     try {
-      await prisma.cargo.delete({ where: { id: id as string } });
+      await prisma.cargo.delete({ where: { id: id as string } }); // Ensure the id is treated as a number
       res.status(204).end();
     } catch (error) {
       res.status(400).json({ error: "Failed to delete cargo" });

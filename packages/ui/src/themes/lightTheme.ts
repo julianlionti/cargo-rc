@@ -18,7 +18,6 @@ export const lightTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Roboto, Arial, sans-serif", // Default font for the app
     h1: {
       fontWeight: 700,
       fontSize: "2.25rem",
@@ -37,32 +36,11 @@ export const lightTheme = createTheme({
     },
   },
   components: {
-    MuiButton: {
-      defaultProps: {
-        size: "small", // Set default size for buttons
-        variant: "contained", // Default button variant
-      },
-      styleOverrides: {
-        root: {
-          borderRadius: "8px", // Make buttons a bit rounder
-        },
-      },
-    },
     MuiCard: {
       styleOverrides: {
         root: {
           borderRadius: "12px", // Round corners for cards
           boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)", // Subtle shadow effect
-        },
-      },
-    },
-    MuiTypography: {
-      styleOverrides: {
-        h1: {
-          fontWeight: 600, // Slightly less bold for H1 headers
-        },
-        h2: {
-          fontWeight: 600, // Slightly less bold for H2 headers
         },
       },
     },

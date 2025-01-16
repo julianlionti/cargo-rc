@@ -6,65 +6,89 @@ import {
   Container,
   Typography,
   Paper,
-  Divider,
   Grid2,
-  Stack,
+  Divider,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
-import { useSession } from "next-auth/react";
+import { indigo } from "@mui/material/colors";
+import Header from "rc/components/shared/Header";
 import { useState, useEffect } from "react";
-import Header from "rc/components/shared/Header"; // Assuming you have a similar header component
-import { Cargo, Driver } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { Cargo } from "@prisma/client";
 
-export default function DriverPage() {
-  const { status } = useSession();
-  const [drivers, setDrivers] = useState<
-    (Driver & { assignedCargos: Cargo[] })[]
-  >([]);
-  const [activeTab, setActiveTab] = useState("driverList");
-  const [loading, setLoading] = useState(true);
+export default function DriverDashboard() {
+  const { data: session } = useSession();
+  const [cargos, setCargos] = useState<Cargo[]>([]);
+  const [selectedCargo, setSelectedCargo] = useState<Cargo | null>(null);
+  const [filter, setFilter] = useState({
+    distance: "",
+    size: "",
+    reward: "",
+    urgency: "",
+  });
+  const [enums, setEnums] = useState({
+    CargoSize: [],
+    CargoUrgency: [],
+    CargoReward: [],
+  });
 
-  // Fetch driver data when the user is authenticated
   useEffect(() => {
-    if (status === "authenticated") {
-      fetch("/api/drivers")
-        .then((response) => response.json())
-        .then((data) => {
-          setDrivers(data);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching drivers:", error);
-          setLoading(false);
-        });
-    }
-  }, [status]);
+    // Fetch cargos from the backend
+    const fetchCargos = async () => {
+      try {
+        const response = await fetch("/api/cargos");
+        const data = await response.json();
+        setCargos(data);
+      } catch (error) {
+        console.error("Error fetching cargos:", error);
+      }
+    };
 
-  // Show loading state or redirect if unauthenticated
-  if (loading) {
-    return (
-      <Box sx={{ textAlign: "center", marginTop: 4 }}>
-        <Typography variant="h6">Loading driver data...</Typography>
-      </Box>
-    );
-  }
+    // Fetch enums from the backend
+    const fetchEnums = async () => {
+      try {
+        const response = await fetch("/api/cargos/enums");
+        const data = await response.json();
+        setEnums(data);
+      } catch (error) {
+        console.error("Error fetching enums:", error);
+      }
+    };
 
-  if (status === "unauthenticated") {
-    return (
-      <Box sx={{ textAlign: "center", marginTop: 4 }}>
-        <Typography variant="h6">
-          You need to be logged in to access this page.
-        </Typography>
-      </Box>
-    );
-  }
+    fetchCargos();
+    fetchEnums();
+  }, []);
+
+  const handleSelectCargo = async (cargoId) => {
+    const updatedCargo = await fetch(`/api/cargos/${cargoId}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        status: "In Transit",
+        assignedToId: session.user.id,
+      }),
+    });
+    setSelectedCargo(updatedCargo);
+  };
+
+  const handleClearFilters = () => {
+    setFilter({
+      distance: "",
+      size: "",
+      reward: "",
+      urgency: "",
+    });
+  };
 
   return (
     <Box>
       <Header
         title="Driver Dashboard"
         buttons={[
-          { title: "Driver List", to: "/driver" },
-          { title: "Settings", to: "/driver/settings" },
+          { title: "Dashboard", to: "/driver" },
+          { title: "Profile", to: "/driver/profile" },
         ]}
       />
       {/* Main Content */}
@@ -74,99 +98,119 @@ export default function DriverPage() {
           <Grid2 size={{ md: 3, xs: 12 }}>
             <Paper sx={{ padding: 2, boxShadow: 2, height: "100%" }}>
               <Typography variant="h6" gutterBottom>
-                Navigation
+                Filter Cargos
               </Typography>
+              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                <InputLabel>Size/Weight</InputLabel>
+                <Select
+                  value={filter.size}
+                  onChange={(e) =>
+                    setFilter({ ...filter, size: e.target.value })
+                  }
+                  label="Size/Weight"
+                >
+                  {enums.CargoSize.map((size) => (
+                    <MenuItem key={size} value={size}>
+                      {size}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                <InputLabel>Urgency</InputLabel>
+                <Select
+                  value={filter.urgency}
+                  onChange={(e) =>
+                    setFilter({ ...filter, urgency: e.target.value })
+                  }
+                  label="Urgency"
+                >
+                  {enums.CargoUrgency.map((urgency) => (
+                    <MenuItem key={urgency} value={urgency}>
+                      {urgency}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControl fullWidth sx={{ marginBottom: 2 }}>
+                <InputLabel>Reward</InputLabel>
+                <Select
+                  value={filter.reward}
+                  onChange={(e) =>
+                    setFilter({ ...filter, reward: e.target.value })
+                  }
+                  label="Reward"
+                >
+                  {enums.CargoReward.map((reward) => (
+                    <MenuItem key={reward} value={reward}>
+                      {reward}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {/* Clear Filters Button */}
               <Button
-                variant="contained"
+                variant="outlined"
+                color="secondary"
+                onClick={handleClearFilters}
+                sx={{ marginTop: 2 }}
                 fullWidth
-                sx={{ marginBottom: 2 }}
-                onClick={() => setActiveTab("driverList")}
               >
-                Driver List
-              </Button>
-              <Button
-                variant="contained"
-                fullWidth
-                sx={{ marginBottom: 2 }}
-                onClick={() => setActiveTab("settings")}
-              >
-                Settings
+                Clear Filters
               </Button>
             </Paper>
           </Grid2>
 
           {/* Main Content Area */}
           <Grid2 size={{ md: 9, xs: 12 }}>
-            {activeTab === "driverList" && (
-              <Box>
-                <Typography variant="h4" sx={{ marginBottom: 2 }}>
-                  Drivers
-                </Typography>
-                <Grid2 container spacing={4}>
-                  {drivers.map((driver) => (
-                    <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={driver.id}>
-                      <Paper sx={{ padding: 2, boxShadow: 2 }}>
-                        <Typography variant="h6">{driver.name}</Typography>
-                        <Typography color="textSecondary">
-                          {driver.email}
-                        </Typography>
-                        <Divider sx={{ marginY: 2 }} />
-                        <Typography variant="body2">
-                          <strong>Assigned Cargos:</strong>
-                        </Typography>
-                        <ul>
-                          {driver.assignedCargos?.length ? (
-                            driver.assignedCargos.map((cargo) => (
-                              <li key={cargo.id}>
-                                <Typography>{cargo.title}</Typography>
-                              </li>
-                            ))
-                          ) : (
-                            <Typography>No cargos assigned</Typography>
-                          )}
-                        </ul>
-                      </Paper>
-                    </Grid2>
-                  ))}
-                </Grid2>
-              </Box>
-            )}
-
-            {activeTab === "settings" && (
-              <Box>
-                <Typography variant="h4" sx={{ marginBottom: 2 }}>
-                  Settings
-                </Typography>
-                <Typography variant="h6" sx={{ marginBottom: 2 }}>
-                  Update your preferences or profile settings.
-                </Typography>
-                <Divider sx={{ marginBottom: 2 }} />
-                <Stack spacing={2} direction="row">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ marginBottom: 2 }}
-                  >
-                    Change Profile Info
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ marginBottom: 2 }}
-                  >
-                    Update Notification Preferences
-                  </Button>
-                </Stack>
-              </Box>
-            )}
+            <Typography variant="h4" sx={{ marginBottom: 2 }}>
+              Available Cargos
+            </Typography>
+            <Divider sx={{ marginBottom: 4 }} />
+            <Grid2 container spacing={4}>
+              {cargos
+                .filter(
+                  (cargo) =>
+                    (filter.size ? cargo.size === filter.size : true) &&
+                    (filter.reward ? cargo.reward === filter.reward : true) &&
+                    (filter.urgency ? cargo.urgency === filter.urgency : true)
+                )
+                .map((cargo) => (
+                  <Grid2 key={cargo.id} size={{ md: 4, xs: 12 }}>
+                    <Paper sx={{ padding: 3, boxShadow: 2 }}>
+                      <Typography variant="h6">{cargo.title}</Typography>
+                      <Typography variant="body1">
+                        Distance: {cargo.distance}
+                      </Typography>
+                      <Typography variant="body1">
+                        Weight: {cargo.size}
+                      </Typography>
+                      <Typography variant="body1">
+                        Reward: {cargo.reward}
+                      </Typography>
+                      <Typography variant="body1">
+                        Urgency: {cargo.urgency}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{ marginTop: 2 }}
+                        onClick={() => handleSelectCargo(cargo.id)}
+                      >
+                        Pick this Cargo
+                      </Button>
+                    </Paper>
+                  </Grid2>
+                ))}
+            </Grid2>
           </Grid2>
         </Grid2>
       </Container>
-
       {/* Footer */}
       <Box
         sx={{
-          backgroundColor: "indigo",
+          backgroundColor: indigo[500],
           padding: "20px 0",
           color: "white",
           position: "fixed",
@@ -176,9 +220,7 @@ export default function DriverPage() {
           textAlign: "center",
         }}
       >
-        <Typography variant="body2">
-          Driver Dashboard - All Rights Reserved
-        </Typography>
+        <Typography variant="body2">Cargo RC - All Rights Reserved</Typography>
       </Box>
     </Box>
   );
