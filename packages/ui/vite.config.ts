@@ -16,11 +16,11 @@ export default defineConfig({
       // make sure to externalize deps that shouldn't be bundled
       // into your library
       external: [
-        // "dayjs",
+        "dayjs",
         "react",
         "react-dom",
         "@mui/material",
-        // "@mui/x-date-pickers",
+        "@mui/x-date-pickers",
         "@emotion/react",
         "@emotion/styled",
       ],
@@ -28,11 +28,11 @@ export default defineConfig({
         // Provide global variables to use in the UMD build
         // for externalized deps
         globals: {
-          // dayjs: "Dayjs",
+          dayjs: "Dayjs",
           react: "React",
           "react-dom": "ReactDOM",
           "@mui/material": "MuiMaterial",
-          // "@mui/x-date-pickers":"MuiXDatePickers",
+          "@mui/x-date-pickers":"MuiXDatePickers",
           "@emotion/react": "EmotionReact",
           "@emotion/styled": "EmotionStyled",
         },
