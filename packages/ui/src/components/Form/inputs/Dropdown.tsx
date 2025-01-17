@@ -1,4 +1,3 @@
-"use client";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 

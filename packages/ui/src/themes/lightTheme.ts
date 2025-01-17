@@ -36,6 +36,7 @@ export const lightTheme = createTheme({
     },
   },
   components: {
+    MuiInputBase: { defaultProps: { size: "small" } },
     MuiCard: {
       styleOverrides: {
         root: {

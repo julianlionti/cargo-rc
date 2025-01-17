@@ -2,7 +2,7 @@ import { Container, Paper, Typography, Grid2 } from "@mui/material";
 import Header from "rc/components/shared/Header";
 import { CargoForm } from "../components/CargoForm";
 
-export default function CreateCargo() {
+export default async function CreateCargo() {
   // const [cargoDetails, setCargoDetails] = useState({
   //   title: "",
   //   origin: "",

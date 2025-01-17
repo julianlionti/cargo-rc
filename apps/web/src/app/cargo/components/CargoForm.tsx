@@ -1,12 +1,12 @@
 "use client";
-import { Button, Grid2 } from "@mui/material";
-import { Form, Dropdown, NumberInput, TextInput } from "@ui";
+import { Box, Button, Stack } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { createForm, Form } from "@ui";
 import { cargoSchema, CargoSchema } from "@utils";
 import { useActionState } from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
-const CargoTextInput = TextInput<CargoSchema>;
-const CargoNumberInput = NumberInput<CargoSchema>;
-const CargoDropdown = Dropdown<CargoSchema>;
+const { TextInput, NumberInput, Dropdown, DateTimeInput } = createForm();
 
 export function CargoForm() {
   const [, createCargo] = useActionState(
@@ -17,58 +17,47 @@ export function CargoForm() {
   );
 
   return (
-    <Form onSubmit={createCargo} schema={cargoSchema}>
-      <Grid2 container spacing={2}>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoTextInput id="title" label="Title" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoTextInput id="origin" label="Origin" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoTextInput id="company" label="Company" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="originLat" label="Origin lat" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="originLng" label="Origin Lng" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoTextInput id="destination" label="Destination" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="destinationLat" label="Destination Lat" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="destinationLng" label="Destination Lng" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="weight" label="Weight" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoNumberInput id="reward" label="Reward" prefix="$" />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoDropdown
-            id="size"
-            options={[{ id: "SMALL" }, { id: "MEDIUM" }, { id: "LARGE" }]}
-            label="Size"
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
-          <CargoDropdown
-            id="urgency"
-            options={[{ id: "LOW" }, { id: "MEDIUM" }, { id: "HIGH" }]}
-            label="Urgency"
-          />
-        </Grid2>
-        <Grid2 size={{ xs: 12 }}>
-          <Button type="submit" fullWidth>
-            Submit
-          </Button>
-        </Grid2>
-      </Grid2>
-    </Form>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Form onSubmit={createCargo} schema={cargoSchema}>
+        <Stack spacing={2}>
+          <Stack spacing={1} direction="row">
+            <TextInput id="title" label="Title" />
+            <TextInput id="company" label="Company" />
+          </Stack>
+          <Stack spacing={1} direction="row">
+            <TextInput id="origin" label="Origin" />
+            <NumberInput id="originLat" label="Origin Lat" />
+            <NumberInput id="originLng" label="Origin Lng" />
+          </Stack>
+          <Stack spacing={1} direction="row">
+            <TextInput id="destination" label="Destination" />
+            <NumberInput id="destinationLat" label="Destination Lat" />
+            <NumberInput id="destinationLng" label="Destination Lng" />
+          </Stack>
+          <Stack spacing={1} direction="row">
+            <NumberInput id="weight" label="Weight" />
+            <NumberInput id="reward" label="Reward" prefix="$" />
+          </Stack>
+          <Stack spacing={1} direction="row">
+            <Dropdown
+              id="size"
+              options={[{ id: "SMALL" }, { id: "MEDIUM" }, { id: "LARGE" }]}
+              label="Size"
+            />
+            <Dropdown
+              id="urgency"
+              options={[{ id: "LOW" }, { id: "MEDIUM" }, { id: "HIGH" }]}
+              label="Urgency"
+            />
+          </Stack>
+
+          <DateTimeInput id="deliverBefore" />
+
+          <Box alignSelf="self-end">
+            <Button type="submit">Submit</Button>
+          </Box>
+        </Stack>
+      </Form>
+    </LocalizationProvider>
   );
 }

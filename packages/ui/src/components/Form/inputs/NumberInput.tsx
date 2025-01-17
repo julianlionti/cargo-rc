@@ -1,4 +1,3 @@
-"use client";
 import { TextField } from "@mui/material";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
 import { NumericFormat } from "react-number-format";

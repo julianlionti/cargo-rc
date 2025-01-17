@@ -1,6 +1,6 @@
-"use client";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import { dateOnChange, dateValue } from "../../../utils/dateinput.utils";
 
 interface DateTimeInputProps<T extends FieldValues> {
   id: Path<T>;
@@ -22,6 +22,8 @@ export default function DateTimeInput<T extends FieldValues>({
       render={({ field, fieldState }) => (
         <DateTimePicker
           {...field}
+          onChange={dateOnChange(field)}
+          value={dateValue(field)}
           slotProps={{ textField: { error: !!fieldState.error } }}
           label={label}
         />
