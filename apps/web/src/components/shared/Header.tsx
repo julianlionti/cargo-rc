@@ -18,11 +18,11 @@ interface ButtonProps {
   to: string;
 }
 interface HeaderProps {
-  buttons: ButtonProps[];
-  title: string;
+  buttons?: ButtonProps[];
+  title?: string;
 }
 
-export default function Header({ buttons, title }: HeaderProps) {
+export default function Header({ buttons = [], title }: HeaderProps) {
   const { data } = useSession();
   const { user } = data || {};
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

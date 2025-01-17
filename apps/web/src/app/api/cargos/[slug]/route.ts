@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
+import { NextResponse } from "next/server";
+import { db } from "rc/lib/db";
+import { responseError } from "rc/utils/api.utils";
 
 /**
  * @swagger
@@ -200,41 +201,49 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                   description: Error message
  */
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { id } = req.query;
+  try {
+    const slug = (await params).slug;
+    const cargo = await db.cargo.findUnique({ where: { id: slug } });
 
-  if (req.method === "GET") {
-    try {
-      const cargo = await prisma.cargo.findUnique({
-        where: { id: id as string }, // Ensure the id is treated as a number
-      });
-      if (!cargo) return res.status(404).json({ error: "Cargo not found" });
-      res.status(200).json(cargo);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch cargo" });
-    }
-  } else if (req.method === "PUT") {
-    try {
-      const updatedCargo = await prisma.cargo.update({
-        where: { id: id as string }, // Ensure the id is treated as a number
-        data: req.body,
-      });
-      res.status(200).json(updatedCargo);
-    } catch (error) {
-      res.status(400).json({ error: "Failed to update cargo" });
-    }
-  } else if (req.method === "DELETE") {
-    try {
-      await prisma.cargo.delete({ where: { id: id as string } }); // Ensure the id is treated as a number
-      res.status(204).end();
-    } catch (error) {
-      res.status(400).json({ error: "Failed to delete cargo" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    if (!cargo) return responseError("Cargo doesn't exist", 404);
+    return NextResponse.json(cargo);
+  } catch (error) {
+    return responseError("Failed to get cargo", 400);
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    const slug = (await params).slug;
+
+    const data = await request.json();
+    const updatedCargo = await db.cargo.update({
+      where: { id: slug },
+      data,
+    });
+    return NextResponse.json(updatedCargo);
+  } catch (error) {
+    return responseError("Failed to update cargo", 400);
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  try {
+    const slug = (await params).slug;
+
+    await db.cargo.delete({ where: { id: slug } });
+    return NextResponse.json(undefined, { status: 204 });
+  } catch (error) {
+    return responseError("Failed to delete cargo", 400);
   }
 }

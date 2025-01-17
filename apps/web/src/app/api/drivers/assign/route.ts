@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "rc/lib/db";
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "rc/lib/db";
+import { responseError } from "rc/utils/api.utils";
 
 /**
  * @swagger
@@ -88,20 +90,23 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    try {
-      const { driverId, cargoId } = req.body;
-
-      const updatedCargo = await prisma.cargo.update({
-        where: { id: cargoId },
-        data: { assignedToId: driverId },
-      });
-
-      res.status(200).json(updatedCargo);
-    } catch (error) {
-      res.status(400).json({ error: "Failed to assign cargo" });
-    }
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const { driverId, cargoId } = await request.json();
+
+    const updatedCargo = await db.cargo.update({
+      where: { id: cargoId },
+      data: { assignedToId: driverId },
+    });
+
+    return NextResponse.json(updatedCargo);
+  } catch (error) {
+    return responseError("Failed to assign cargo", 400);
   }
 }

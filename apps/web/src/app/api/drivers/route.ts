@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "rc/lib/db";
+import { NextResponse } from "next/server";
+import { db } from "rc/lib/db";
+import { responseError } from "rc/utils/api.utils";
 
 /**
  * @swagger
@@ -70,21 +72,13 @@ import prisma from "rc/lib/db";
  *                   description: Error message
  */
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "GET") {
-    try {
-      const drivers = await prisma.driver.findMany({
-        include: { assignedCargos: true },
-      });
-      res.status(200).json(drivers);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch drivers" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+export async function GET(request: Request) {
+  try {
+    const drivers = await db.driver.findMany({
+      include: { assignedCargos: true },
+    });
+    return NextResponse.json(drivers);
+  } catch (error) {
+    return responseError("Failed to fetch drivers");
   }
 }

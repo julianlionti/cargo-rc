@@ -1,6 +1,6 @@
-// pages/api/cargoEnums.js
-import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@prisma/client";
+import { NextResponse } from "next/server";
+import { responseError } from "rc/utils/api.utils";
 
 /**
  * @swagger
@@ -51,20 +51,16 @@ import prisma from "@prisma/client";
  *                   example: "Error fetching enums"
  */
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export async function GET() {
   try {
     const enums = {
       CargoSize: Object.values(prisma.CargoSize),
       CargoUrgency: Object.values(prisma.CargoUrgency),
       CargoReward: ["high", "medium", "low"], // or other values, adjust as necessary
     };
-
-    res.status(200).json(enums);
+    return NextResponse.json(enums, { status: 200 });
   } catch (error) {
     console.error("Error fetching enums:", error);
-    res.status(500).json({ message: "Error fetching enums" });
+    return responseError("Error fetching enums");
   }
 }

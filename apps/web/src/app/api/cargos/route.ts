@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { NextApiRequest, NextApiResponse } from "next";
-import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
-
 /**
  * @swagger
  * tags:
@@ -232,20 +229,40 @@ import prisma from "rc/lib/db"; // Assuming prisma client is initialized here
  *                   description: Error message
  */
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "GET") {
-    try {
-      const cargos = await prisma.cargo.findMany();
-      res.status(200).json(cargos);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch cargos" });
-    }
-  } else if (req.method === "POST") {
-    try {
-      const {
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "rc/lib/db";
+
+export async function GET() {
+  try {
+    const cargo = await db.cargo.findMany();
+    return NextResponse.json(cargo);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch cargo" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: NextRequest) {
+  const {
+    title,
+    origin,
+    destination,
+    weight,
+    company,
+    reward,
+    size,
+    urgency,
+    originLat,
+    originLng,
+    destinationLat,
+    destinationLng,
+  } = await request.json();
+
+  try {
+    const newCargo = await db.cargo.create({
+      data: {
         title,
         origin,
         destination,
@@ -258,33 +275,15 @@ export default async function handler(
         originLng,
         destinationLat,
         destinationLng,
-      } = req.body;
-
-      const newCargo = await prisma.cargo.create({
-        data: {
-          title,
-          origin,
-          destination,
-          weight,
-          company,
-          size,
-          urgency,
-          reward,
-          originLat,
-          originLng,
-          destinationLat,
-          destinationLng,
-          status: "AVAILABLE", // Default status
-        },
-      });
-
-      res.status(201).json(newCargo);
-    } catch (error) {
-      console.log(error);
-      res.status(400).json({ error: "Failed to create cargo" });
-    }
-  } else {
-    res.setHeader("Allow", ["GET", "POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+        status: "AVAILABLE", // Default status
+      },
+    });
+    return NextResponse.json(newCargo, { status: 201 });
+  } catch (error) {
+    console.error("Failed to create cargo:", error);
+    return NextResponse.json(
+      { error: "Failed to create cargo" },
+      { status: 500 }
+    );
   }
 }

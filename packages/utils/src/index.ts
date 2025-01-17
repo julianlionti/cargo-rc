@@ -8,5 +8,4 @@ export const multiply = (a: number, b: number): number => {
   return a * b;
 };
 
-// Exporting all utilities from this entry file
-// export * from "./mathUtils"; // Example of re-exporting a specific file
+export * from "./schemas/cargo.schema";

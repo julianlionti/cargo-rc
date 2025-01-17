@@ -20,17 +20,35 @@
     "dev": "vite build --watch",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@hookform/resolvers": "^3.10.0",
     "@mui/material": "^6.4.0",
+    "@mui/x-date-pickers": "^7.24.0",
+    "@utils": "workspace:*",
+    "dayjs": "^1.11.13",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-hook-form": "^7.54.2",
+    "react-number-format": "^5.4.3",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "3.2.3",
     "@eslint/js": "^9.17.0",
+    "@faker-js/faker": "^9.4.0",
+    "@storybook/addon-essentials": "8.5.0",
+    "@storybook/addon-interactions": "8.5.0",
+    "@storybook/addon-onboarding": "8.5.0",
+    "@storybook/blocks": "8.5.0",
+    "@storybook/react": "8.5.0",
+    "@storybook/react-vite": "8.5.0",
+    "@storybook/test": "8.5.0",
     "@types/node": "^22.10.6",
     "@types/react": "^19.0.7",
     "@types/react-dom": "^19.0.3",
@@ -38,10 +56,17 @@
     "eslint": "^9.17.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.16",
+    "eslint-plugin-storybook": "^0.11.2",
     "globals": "^15.14.0",
+    "storybook": "8.5.0",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:",
     "vite": "catalog:",
     "vite-plugin-dts": "^4.5.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
   }
 }
