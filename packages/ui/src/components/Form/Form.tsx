@@ -1,52 +1,73 @@
-import { FieldValues, FormProvider, useForm } from "react-hook-form";
+import {
+  DefaultValues,
+  FieldValues,
+  FormProvider,
+  useForm,
+  UseFormReturn,
+} from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ZodTypeAny } from "zod";
-import { ReactNode } from "react";
+import { ReactNode, Ref, useImperativeHandle } from "react";
 import { Alert, Box, Typography } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { z } from "zod";
+import { Watch } from "./Watch";
 
-interface FormProps<T extends FieldValues> {
-  schema: ZodTypeAny;
-  children: ReactNode;
-  onSubmit: (values: T) => void;
+export interface FormRef<T extends FieldValues> {
+  methods: UseFormReturn<T>;
 }
 
-export default function Form<T extends FieldValues>({
+interface FormProps<T extends FieldValues, Z extends ZodTypeAny> {
+  schema?: Z;
+  children: ReactNode;
+  ref?: Ref<FormRef<T>>;
+  defaultValues?: DefaultValues<T>;
+  isDisabled?: boolean;
+  onValuesChanged?: (values: T) => T;
+  onSubmit?: (values: z.infer<Z>) => void;
+}
+
+export default function Form<T extends FieldValues, Z extends ZodTypeAny>({
+  ref,
   children,
   schema,
+  isDisabled,
+  defaultValues,
+  onValuesChanged,
   onSubmit,
-}: FormProps<T>) {
-  const methods = useForm<T>({ resolver: zodResolver(schema) });
+}: FormProps<T, Z>) {
+  const methods = useForm<T>({
+    resolver: schema ? zodResolver(schema) : undefined,
+    disabled: isDisabled,
+    defaultValues,
+  });
   const { formState, handleSubmit } = methods;
   const { errors } = formState;
+
+  useImperativeHandle(ref, () => ({
+    methods,
+  }));
+
   return (
     <FormProvider {...methods}>
+      {onValuesChanged && <Watch onValuesChanged={onValuesChanged} />}
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Box
           component="form"
-          onSubmit={handleSubmit(onSubmit)}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            gap: 2, // Adds space between form fields
-            maxWidth: 600, // Limits the form width to make it look less stretched out
-            margin: "0 auto", // Centers the form
-            padding: 3,
-          }}
+          onSubmit={onSubmit ? handleSubmit(onSubmit) : undefined}
         >
           {children}
-
-          {!!Object.keys(errors).length && (
-            <Alert severity="error" sx={{ marginTop: 2 }}>
-              {Object.entries(errors).map(([key, val], index) => (
-                <Typography key={index} variant="body2">
-                  {`${key}: ${val?.message}`}
-                </Typography>
-              ))}
-            </Alert>
-          )}
         </Box>
+        {!!Object.keys(errors).length && (
+          <Alert severity="error" sx={{ marginTop: 2 }}>
+            {Object.entries(errors).map(([key, val], index) => (
+              <Typography key={index} variant="body2">
+                {`${key}: ${val?.message}`}
+              </Typography>
+            ))}
+          </Alert>
+        )}
       </LocalizationProvider>
     </FormProvider>
   );

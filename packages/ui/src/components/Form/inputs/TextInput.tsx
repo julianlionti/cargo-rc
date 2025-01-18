@@ -1,27 +1,28 @@
 import { TextField } from "@mui/material";
-import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import { Controller, FieldValues, Path, PathValue, useFormContext } from "react-hook-form";
+import { CommonInputProps } from "../../../types/input.types";
 
-interface TextInputProps<T extends FieldValues> {
+interface TextInputProps<T extends FieldValues> extends CommonInputProps {
   id: Path<T>;
-  label?: string;
 }
 
 export default function TextInput<T extends FieldValues>({
   id,
   label,
+  isDisabled,
 }: TextInputProps<T>) {
   const { control } = useFormContext();
   return (
     <Controller
       name={id}
       control={control}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      defaultValue={"" as any}
+      defaultValue={"" as PathValue<T, Path<T>>}
       render={({ field, fieldState }) => (
         <TextField
+          {...field}
+          disabled={field.disabled || isDisabled}
           error={!!fieldState.error}
           fullWidth
-          {...field}
           label={label}
         />
       )}

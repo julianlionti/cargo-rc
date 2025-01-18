@@ -1,15 +1,22 @@
 import { TimePicker } from "@mui/x-date-pickers";
-import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  FieldValues,
+  Path,
+  PathValue,
+  useFormContext,
+} from "react-hook-form";
 import { dateOnChange, dateValue } from "../../../utils/dateinput.utils";
+import { CommonInputProps } from "../../../types/input.types";
 
-interface TimeInputProps<T extends FieldValues> {
+interface TimeInputProps<T extends FieldValues> extends CommonInputProps {
   id: Path<T>;
-  label?: string;
 }
 
 export default function TimeInput<T extends FieldValues>({
   id,
   label,
+  isDisabled,
 }: TimeInputProps<T>) {
   const { control } = useFormContext<T>();
 
@@ -17,14 +24,14 @@ export default function TimeInput<T extends FieldValues>({
     <Controller
       name={id}
       control={control}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      defaultValue={null as any}
+      defaultValue={null as PathValue<T, Path<T>>}
       render={({ field, fieldState }) => (
         <TimePicker
           {...field}
+          disabled={field.disabled || isDisabled}
           onChange={dateOnChange(field)}
           value={dateValue(field)}
-          slotProps={{ textField: { error: !!fieldState.error } }}
+          slotProps={{ textField: { error: !!fieldState.error, label } }}
           label={label}
         />
       )}

@@ -5,6 +5,8 @@ import DateInput from "../components/Form/inputs/DateInput";
 import NumberInput from "../components/Form/inputs/NumberInput";
 import DateTimeInput from "../components/Form/inputs/DateTimeInput";
 import TimeInput from "../components/Form/inputs/TimeInput";
+import Autocomplete from "../components/Form/inputs/Autocomplete";
+import { Option } from "../types/input.types";
 
 type CreateFormRet<T extends FieldValues> = {
   TextInput: typeof TextInput<T>;
@@ -13,6 +15,8 @@ type CreateFormRet<T extends FieldValues> = {
   DateInput: typeof DateInput<T>;
   DateTimeInput: typeof DateTimeInput<T>;
   TimeInput: typeof TimeInput<T>;
+  AutocompleteCustomOption: <O extends Option>() => typeof Autocomplete<T, O>;
+  Autocomplete: typeof Autocomplete<T, Option>;
 };
 
 export function createForm<T extends FieldValues>(): CreateFormRet<T> {
@@ -23,5 +27,7 @@ export function createForm<T extends FieldValues>(): CreateFormRet<T> {
     DateInput: DateInput<T>,
     DateTimeInput: DateTimeInput<T>,
     TimeInput: TimeInput<T>,
+    AutocompleteCustomOption: <O extends Option>() => Autocomplete<T, O>,
+    Autocomplete: Autocomplete<T, Option>,
   };
 }

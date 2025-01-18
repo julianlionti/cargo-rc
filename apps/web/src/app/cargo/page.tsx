@@ -2,12 +2,11 @@ import { Button, Container, Typography, Box } from "@mui/material";
 import Header from "rc/components/shared/Header";
 import Footer from "rc/components/shared/Footer";
 import CargoList from "./components/CargoList";
-import { fetchApi } from "rc/utils/api.utils";
 import { Cargo } from "@prisma/client";
+import { fetchApi } from "rc/utils/fetchApi";
 
 export default async function CargoPage() {
   const cargoData = await fetchApi<Cargo[]>("api/cargos");
-  console.log(cargoData);
 
   // // const router = useRouter();
   // const [cargos, setCargos] = useState([]);

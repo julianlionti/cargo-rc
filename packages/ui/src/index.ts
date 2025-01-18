@@ -8,3 +8,4 @@ export { default as Dropdown } from "./components/Form/inputs/Dropdown";
 export { default as NumberInput } from "./components/Form/inputs/NumberInput";
 
 export { createForm } from "./utils/form.utils";
+export type { FormRef } from "./components/Form/Form";

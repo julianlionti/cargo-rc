@@ -1,8 +1,8 @@
-import { Container, Paper, Typography, Grid2 } from "@mui/material";
+import { Container, Typography, Grid2 } from "@mui/material";
 import Header from "rc/components/shared/Header";
 import { CargoForm } from "../components/CargoForm";
 
-export default async function CreateCargo() {
+export default function CreateCargo() {
   // const [cargoDetails, setCargoDetails] = useState({
   //   title: "",
   //   origin: "",
@@ -50,9 +50,7 @@ export default async function CreateCargo() {
         </Typography>
         <Grid2 container spacing={3}>
           <Grid2 size={{ xs: 12 }}>
-            <Paper sx={{ padding: 3 }}>
-              <CargoForm />
-            </Paper>
+            <CargoForm />
           </Grid2>
         </Grid2>
       </Container>

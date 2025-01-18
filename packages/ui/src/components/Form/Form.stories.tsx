@@ -25,6 +25,7 @@ const {
   Dropdown,
   NumberInput,
   TextInput,
+  Autocomplete,
   TimeInput,
 } = createForm<CargoSchema>();
 
@@ -54,9 +55,16 @@ const meta: Meta<typeof Form> = {
           <TextInput id="company" label="Company" />
         </Stack>
         <Stack spacing={1} direction="row">
-          <TextInput id="origin" label="Origin" />
-          <NumberInput id="originLat" label="Origin Lat" />
-          <NumberInput id="originLng" label="Origin Lng" />
+          <Autocomplete
+            id="origin"
+            label="Origin"
+            options={[{ id: "Uno" }, { id: "Dos" }, { id: "Tres" }]}
+            onTextChanged={(text) => {
+              console.log(text);
+            }}
+          />
+          <NumberInput id="originLat" label="Origin Lat" isDisabled />
+          <NumberInput id="originLng" label="Origin Lng" isDisabled />
         </Stack>
         <Stack spacing={1} direction="row">
           <TextInput id="destination" label="Destination" />
@@ -80,9 +88,9 @@ const meta: Meta<typeof Form> = {
           />
         </Stack>
 
-        <DateInput id="deliverBefore" />
-        <DateTimeInput id="deliverBefore" />
-        <TimeInput id="deliverBefore" />
+        <DateInput id="deliverBefore" label="Deliver Before" />
+        <DateTimeInput id="deliverBefore" label="Deliver Before" />
+        <TimeInput id="deliverBefore" label="Deliver Before" />
 
         <Box alignSelf="self-end">
           <Button type="submit">Submit</Button>

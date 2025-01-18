@@ -1,39 +1,201 @@
 "use client";
-import { Box, Button, Stack } from "@mui/material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { createForm, Form } from "@ui";
+import {
+  Box,
+  Button,
+  Collapse,
+  LinearProgress,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
+import { createForm, Form, FormRef } from "@ui";
+import { Option } from "@ui/dist/types/input.types";
 import { cargoSchema, CargoSchema } from "@utils";
-import { useActionState } from "react";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useRouter } from "next/navigation";
+import clientConfig from "rc/config/client.config";
+import { useGeolocation } from "rc/hooks/useGeolocation";
+import { fetchApi } from "rc/utils/fetchApi";
+import {
+  startTransition,
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-const { TextInput, NumberInput, Dropdown, DateTimeInput } = createForm();
+type Position = { lat: number; lng: number };
+type OptionsWithPosition = Option & { position: Position };
+
+type HereItem = {
+  id: string;
+  title: string;
+  resultType: string;
+  position: Position;
+  distance: number;
+};
+type HereRet = {
+  items: HereItem[];
+};
+const getHereUrl = (
+  text: string,
+  location: Position = { lat: 39.31974, lng: -76.56721 }
+) => {
+  return `https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.lat},${location.lng}&limit=5&apiKey=${clientConfig.NEXT_PUBLIC_HERE_API}&q=${text}`;
+};
+
+const parseHereResponse = (items: HereItem[]) => {
+  return items
+    .filter(
+      (item) =>
+        item.resultType === "houseNumber" || item.resultType === "street"
+    )
+    .map(
+      (e): OptionsWithPosition => ({
+        id: e.title,
+        title: e.title,
+        position: e.position,
+      })
+    );
+};
+
+const {
+  AutocompleteCustomOption,
+  TextInput,
+  NumberInput,
+  Dropdown,
+  DateTimeInput,
+} = createForm<CargoSchema>();
+
+const Autocomplete = AutocompleteCustomOption<OptionsWithPosition>();
 
 export function CargoForm() {
-  const [, createCargo] = useActionState(
-    (prev: unknown, formData: CargoSchema) => {
-      console.log(formData);
+  const router = useRouter();
+
+  const [distance, setDistance] = useState(0);
+
+  const formRef = useRef<FormRef<CargoSchema> | null>(null);
+  const setValue = formRef.current?.methods.setValue;
+  const watch = formRef.current?.methods.watch;
+
+  const { location } = useGeolocation();
+
+  const [, createCargo, isCreatingCargo] = useActionState(
+    async (_: unknown, values: CargoSchema) => {
+      const response = await fetch("/api/cargos", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      if (response.ok) router.replace("/cargo");
     },
     null
   );
 
+  const [locationsForOrigin, getLocationForOrigin, isGettingLocationForOrigin] =
+    useActionState(async (_: OptionsWithPosition[], text: string) => {
+      const { items } = await fetchApi<HereRet>(
+        getHereUrl(text, location || undefined)
+      );
+      return parseHereResponse(items);
+    }, []);
+
+  const [
+    locationsForDestination,
+    getLocationForDestination,
+    isGettingLocationForDestination,
+  ] = useActionState(async (_: OptionsWithPosition[], text: string) => {
+    const { items } = await fetchApi<HereRet>(
+      getHereUrl(text, location || undefined)
+    );
+    return parseHereResponse(items);
+  }, []);
+
+  const [originLat, originLng, destinationLat, destinationLng] = watch
+    ? watch(["originLat", "originLng", "destinationLat", "destinationLng"])
+    : [];
+
+  const getDistance = useCallback(async () => {
+    if (!originLat || !originLng || !destinationLat || !destinationLng) return;
+    const { items } = await fetchApi<HereRet>(
+      getHereUrl(originLat + "," + originLng, {
+        lat: destinationLat,
+        lng: destinationLng,
+      })
+    );
+    const [first] = items;
+    if (first?.distance) {
+      setDistance(first.distance);
+    }
+  }, [originLat, originLng, destinationLat, destinationLng]);
+
+  useEffect(() => {
+    getDistance();
+  }, [getDistance]);
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Form onSubmit={createCargo} schema={cargoSchema}>
-        <Stack spacing={2}>
+    <Form
+      ref={formRef}
+      onSubmit={(values) =>
+        startTransition(() => {
+          createCargo(values);
+        })
+      }
+      schema={cargoSchema}
+      isDisabled={isCreatingCargo}
+    >
+      <Paper>
+        {isCreatingCargo && <LinearProgress />}
+        <Stack spacing={2} padding={3}>
           <Stack spacing={1} direction="row">
             <TextInput id="title" label="Title" />
             <TextInput id="company" label="Company" />
           </Stack>
           <Stack spacing={1} direction="row">
-            <TextInput id="origin" label="Origin" />
-            <NumberInput id="originLat" label="Origin Lat" />
-            <NumberInput id="originLng" label="Origin Lng" />
+            <Autocomplete
+              id="origin"
+              label="Origin"
+              options={locationsForOrigin}
+              onOptionSelected={(option) => {
+                const { position } = option || {};
+                if (!setValue) return;
+                setValue("originLat", (position?.lat || null) as number);
+                setValue("originLng", (position?.lng || null) as number);
+              }}
+              onTextChanged={(next) => {
+                startTransition(() => {
+                  if (next.length > 2) getLocationForOrigin(next);
+                });
+              }}
+              isLoading={isGettingLocationForOrigin}
+            />
+            <NumberInput id="originLat" label="Latitude" isDisabled />
+            <NumberInput id="originLng" label="Longitude" isDisabled />
           </Stack>
           <Stack spacing={1} direction="row">
-            <TextInput id="destination" label="Destination" />
-            <NumberInput id="destinationLat" label="Destination Lat" />
-            <NumberInput id="destinationLng" label="Destination Lng" />
+            <Autocomplete
+              id="destination"
+              label="Destination"
+              options={locationsForDestination}
+              onOptionSelected={(option) => {
+                const { position } = option || {};
+                if (!setValue) return;
+                setValue("destinationLat", (position?.lat || null) as number);
+                setValue("destinationLng", (position?.lng || null) as number);
+              }}
+              onTextChanged={(next) => {
+                startTransition(() => {
+                  if (next.length > 2) getLocationForDestination(next);
+                });
+              }}
+              isLoading={isGettingLocationForDestination}
+            />
+            <NumberInput id="destinationLat" label="Latitude" isDisabled />
+            <NumberInput id="destinationLng" label="Longitude" isDisabled />
           </Stack>
+          <Collapse in={!!distance} sx={{ alignSelf: "end" }}>
+            <Typography>{`Distance Aprox.: ${distance / 1000} km`}</Typography>
+          </Collapse>
+
           <Stack spacing={1} direction="row">
             <NumberInput id="weight" label="Weight" />
             <NumberInput id="reward" label="Reward" prefix="$" />
@@ -51,13 +213,15 @@ export function CargoForm() {
             />
           </Stack>
 
-          <DateTimeInput id="deliverBefore" />
+          <DateTimeInput id="deliverBefore" label="Deliver Before" />
 
           <Box alignSelf="self-end">
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isCreatingCargo}>
+              Submit
+            </Button>
           </Box>
         </Stack>
-      </Form>
-    </LocalizationProvider>
+      </Paper>
+    </Form>
   );
 }

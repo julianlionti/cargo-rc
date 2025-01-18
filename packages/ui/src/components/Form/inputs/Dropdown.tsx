@@ -1,33 +1,49 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
-import { Controller, FieldValues, Path, useFormContext } from "react-hook-form";
+import {
+  Controller,
+  FieldValues,
+  Path,
+  PathValue,
+  useFormContext,
+} from "react-hook-form";
+import { CommonInputProps, Option } from "../../../types/input.types";
 
-interface Option {
-  id: string;
-  title?: string;
-}
-
-interface DropdownProps<T extends FieldValues> {
+interface DropdownProps<T extends FieldValues> extends CommonInputProps {
   id: Path<T>;
-  label?: string;
   options: Option[];
+  onOptionSelected?: (option: string, values: T) => void;
 }
 
 export default function Dropdown<T extends FieldValues>({
   id,
   label,
+  isDisabled,
   options,
+  onOptionSelected,
 }: DropdownProps<T>) {
-  const { control } = useFormContext();
+  const { control, getValues } = useFormContext<T>();
   return (
     <Controller
       name={id}
       control={control}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      defaultValue={"" as any}
+      defaultValue={"" as PathValue<T, Path<T>>}
       render={({ field, fieldState }) => (
         <FormControl fullWidth error={!!fieldState.error}>
           {label && <InputLabel id={`${id}-label`}>{label}</InputLabel>}
-          <Select labelId={`${id}-label`} label={label} {...field}>
+          <Select
+            {...field}
+            onChange={(e) => {
+              field.onChange(e);
+              if (onOptionSelected)
+                onOptionSelected(
+                  (e.target as { value: string }).value,
+                  getValues()
+                );
+            }}
+            labelId={`${id}-label`}
+            label={label}
+            disabled={field.disabled || isDisabled}
+          >
             <MenuItem value="">
               <em>None</em>
             </MenuItem>

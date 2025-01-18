@@ -25,6 +25,7 @@ export default function DateInput<T extends FieldValues>({
           onChange={dateOnChange(field)}
           value={dateValue(field)}
           slotProps={{ textField: { error: !!fieldState.error, label } }}
+          label={label}
         />
       )}
     />
