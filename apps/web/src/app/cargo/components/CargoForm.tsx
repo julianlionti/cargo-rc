@@ -41,7 +41,7 @@ const getHereUrl = (
   text: string,
   location: Position = { lat: 39.31974, lng: -76.56721 }
 ) => {
-  return `https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.lat},${location.lng}&limit=5&apiKey=${clientConfig.NEXT_PUBLIC_HERE_API}&q=${text}`;
+  return `https://autosuggest.search.hereapi.com/v1/autosuggest?at=${location.lat},${location.lng}&limit=50&apiKey=${clientConfig.NEXT_PUBLIC_HERE_API}&q=${text}`;
 };
 
 const parseHereResponse = (items: HereItem[]) => {
@@ -125,8 +125,9 @@ export function CargoForm() {
     const [first] = items;
     if (first?.distance) {
       setDistance(first.distance);
+      if (setValue) setValue("distanceAprox", first.distance);
     }
-  }, [originLat, originLng, destinationLat, destinationLng]);
+  }, [originLat, originLng, destinationLat, destinationLng, setValue]);
 
   useEffect(() => {
     getDistance();
@@ -213,7 +214,7 @@ export function CargoForm() {
             />
           </Stack>
 
-          <DateTimeInput id="deliverBefore" label="Deliver Before" />
+          <DateTimeInput id="deliveryDateTime" label="Deliver Before" />
 
           <Box alignSelf="self-end">
             <Button type="submit" disabled={isCreatingCargo}>

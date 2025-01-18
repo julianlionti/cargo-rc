@@ -229,6 +229,7 @@
  *                   description: Error message
  */
 
+import { CargoSchema } from "@utils/dist";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "rc/lib/db";
 
@@ -256,9 +257,11 @@ export async function POST(request: NextRequest) {
     urgency,
     originLat,
     originLng,
+    distanceAprox,
     destinationLat,
     destinationLng,
-  } = await request.json();
+    deliveryDateTime,
+  } = (await request.json()) satisfies CargoSchema;
 
   try {
     const newCargo = await db.cargo.create({
@@ -271,10 +274,12 @@ export async function POST(request: NextRequest) {
         reward,
         size,
         urgency,
+        distanceAprox,
         originLat,
         originLng,
         destinationLat,
         destinationLng,
+        deliveryDateTime,
         status: "AVAILABLE", // Default status
       },
     });

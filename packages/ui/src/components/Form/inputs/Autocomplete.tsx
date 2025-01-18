@@ -55,6 +55,7 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
       render={({ field, fieldState }) => (
         <MuiAutocomplete
           {...field}
+          filterOptions={(e) => e}
           autoComplete
           value={
             field.value

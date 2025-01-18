@@ -16,7 +16,8 @@ export const cargoSchema = z.object({
     .max(180, "Longitude must be between -180 and 180"),
   destinationLat: z.number().min(-90).max(90),
   destinationLng: z.number().min(-180).max(180),
-  deliverBefore: z.date(),
+  distanceAprox: z.number().nullable(),
+  deliveryDateTime: z.date(),
 });
 
 export type CargoSchema = z.infer<typeof cargoSchema>;

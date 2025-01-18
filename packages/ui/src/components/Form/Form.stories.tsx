@@ -88,9 +88,9 @@ const meta: Meta<typeof Form> = {
           />
         </Stack>
 
-        <DateInput id="deliverBefore" label="Deliver Before" />
-        <DateTimeInput id="deliverBefore" label="Deliver Before" />
-        <TimeInput id="deliverBefore" label="Deliver Before" />
+        <DateInput id="deliveryDateTime" label="Deliver Before" />
+        <DateTimeInput id="deliveryDateTime" label="Deliver Before" />
+        <TimeInput id="deliveryDateTime" label="Deliver Before" />
 
         <Box alignSelf="self-end">
           <Button type="submit">Submit</Button>

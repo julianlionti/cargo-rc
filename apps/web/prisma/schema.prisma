@@ -48,6 +48,10 @@ model Cargo {
   destinationLat Float // Latitude for the destination location
   destinationLng Float // Longitude for the destination location
 
+  distanceAprox Float @default(0)
+
+  deliveryDateTime DateTime @default(now())
+
   assignedTo   Driver?     @relation(fields: [assignedToId], references: [id])
   assignedToId String?     @db.ObjectId
   status       CargoStatus // Enum for cargo status

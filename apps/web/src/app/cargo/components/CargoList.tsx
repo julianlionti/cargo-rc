@@ -72,7 +72,11 @@ export default function CargoList({ data }: CargoListProps) {
               .filter(
                 (cargo) =>
                   (filters.distance
-                    ? cargo.distance === filters.distance
+                    ? (cargo.distanceAprox > 0 &&
+                        cargo.distanceAprox < 500000 &&
+                        filters.distance === "short") ||
+                      (cargo.distanceAprox >= 500000 &&
+                        filters.distance === "long")
                     : true) &&
                   (filters.size ? cargo.size === filters.size : true) &&
                   (filters.reward ? cargo.reward === filters.reward : true) &&
@@ -82,21 +86,27 @@ export default function CargoList({ data }: CargoListProps) {
                 <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={cargo.id}>
                   <Paper sx={{ padding: 3, boxShadow: 2, overflow: "hidden" }}>
                     <Typography variant="h6">{cargo.title}</Typography>
-                    <Typography variant="body1">
-                      Origin: {cargo.origin}
+                    <Typography>
+                      Origin: <b>{cargo.origin}</b>
                     </Typography>
-                    <Typography variant="body1">
-                      Destination: {cargo.destination}
+                    <Typography>
+                      Destination: <b>{cargo.destination}</b>
                     </Typography>
-                    <Typography variant="body1">Size: {cargo.size}</Typography>
-                    <Typography variant="body1">
-                      Reward: ${cargo.reward}
+                    <Typography fontWeight="bold">
+                      Distance (Aprox):{" "}
+                      <b>{`${cargo.distanceAprox / 1000} Km`}</b>
                     </Typography>
-                    <Typography variant="body1">
-                      Urgency: {cargo.urgency}
+                    <Typography>Size: {cargo.size}</Typography>
+                    <Typography>
+                      Reward: <b>${cargo.reward}</b>
                     </Typography>
-                    <Typography variant="body1">
-                      Status: {cargo.status}
+                    <Typography>Urgency: {cargo.urgency}</Typography>
+                    <Typography
+                      color={
+                        cargo.status === "AVAILABLE" ? "success" : undefined
+                      }
+                    >
+                      Status: <b>{cargo.status}</b>
                     </Typography>
                     <Button
                       variant="contained"
