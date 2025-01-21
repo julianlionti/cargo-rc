@@ -265,22 +265,7 @@ export async function POST(request: NextRequest) {
     destinationLng,
     deliveryDateTime,
   } = body;
-  console.log({
-    title,
-    origin,
-    destination,
-    weight,
-    companyId: companyId || null,
-    reward,
-    size,
-    urgency,
-    originLat,
-    originLng,
-    distanceAprox,
-    destinationLat,
-    destinationLng,
-    deliveryDateTime,
-  });
+
   try {
     const cargo = await db.cargo.create({
       data: {

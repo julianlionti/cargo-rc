@@ -5,7 +5,6 @@ export function getFinalOptionList<O extends Option>(
   fieldValue: string,
   labelValue: string
 ): O[] {
-  console.log({ options, fieldValue, labelValue });
   if (options && options.length > 0) return options;
   if (!options && !fieldValue) return [];
 

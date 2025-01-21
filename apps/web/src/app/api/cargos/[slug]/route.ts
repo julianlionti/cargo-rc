@@ -225,7 +225,6 @@ export async function PUT(
   try {
     const { slug } = await params;
     const { id, ...data }: CargoSchema = await request.json();
-    console.log(slug, data);
 
     const updatedCargo = await db.cargo.update({
       where: { id: slug },

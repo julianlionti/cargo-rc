@@ -158,8 +158,6 @@ export function CargoForm(props: CargoFormProps) {
     getDistance();
   }, [getDistance]);
 
-  console.log(defaultValues);
-
   return (
     <Form<CargoSchema>
       ref={formRef}

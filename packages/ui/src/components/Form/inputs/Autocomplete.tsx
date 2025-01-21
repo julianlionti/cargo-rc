@@ -55,7 +55,7 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
   };
 
   const finalOptions = getFinalOptionList<O>(options, fieldValue, labelValue);
-  console.log(finalOptions);
+
   return (
     <Controller
       name={id}
