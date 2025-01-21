@@ -1,7 +1,5 @@
 "use client";
 import {
-  Alert,
-  AlertProps,
   Box,
   Button,
   Collapse,
@@ -10,7 +8,6 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { CargoStatus } from "@prisma/client";
 import { createForm, Form, FormRef, Position } from "@ui";
 import { Option } from "@ui";
 import { cargoSchema, CargoSchema } from "@utils";
@@ -25,6 +22,7 @@ import {
   useEffect,
   useRef,
 } from "react";
+import StatusAlert from "./shared/StatusAlert";
 
 type OptionsWithPosition = Option & { position: Position };
 
@@ -58,15 +56,6 @@ const parseHereResponse = (items: HereItem[]) => {
         position: e.position,
       })
     );
-};
-
-const severityByStatus: Record<CargoStatus, AlertProps["severity"]> = {
-  AVAILABLE: "success",
-  CANCELLED: "error",
-  DELIVERED: "success",
-  IN_TRANSIT: "success",
-  PENDING: "warning",
-  PICKED_UP: "success",
 };
 
 const {
@@ -252,9 +241,7 @@ export function CargoForm(props: CargoFormProps) {
 
           <DateTimeInput id="deliveryDateTime" label="Deliver Before" />
 
-          {status && (
-            <Alert severity={severityByStatus[status]}>{status}</Alert>
-          )}
+          <StatusAlert status={status} />
 
           <Box alignSelf="self-end">
             <Button
