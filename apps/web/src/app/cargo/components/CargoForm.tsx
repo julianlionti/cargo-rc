@@ -1,5 +1,7 @@
 "use client";
 import {
+  Alert,
+  AlertProps,
   Box,
   Button,
   Collapse,
@@ -8,8 +10,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { createForm, Form, FormRef } from "@ui";
-import { Option } from "@ui/dist/types/input.types";
+import { CargoStatus } from "@prisma/client";
+import { createForm, Form, FormRef, Position } from "@ui";
+import { Option } from "@ui";
 import { cargoSchema, CargoSchema } from "@utils";
 import { useRouter } from "next/navigation";
 import clientConfig from "rc/config/client.config";
@@ -21,10 +24,8 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 
-type Position = { lat: number; lng: number };
 type OptionsWithPosition = Option & { position: Position };
 
 type HereItem = {
@@ -53,10 +54,19 @@ const parseHereResponse = (items: HereItem[]) => {
     .map(
       (e): OptionsWithPosition => ({
         id: e.title,
-        title: e.title,
+        name: e.title,
         position: e.position,
       })
     );
+};
+
+const severityByStatus: Record<CargoStatus, AlertProps["severity"]> = {
+  AVAILABLE: "success",
+  CANCELLED: "error",
+  DELIVERED: "success",
+  IN_TRANSIT: "success",
+  PENDING: "warning",
+  PICKED_UP: "success",
 };
 
 const {
@@ -69,10 +79,14 @@ const {
 
 const Autocomplete = AutocompleteCustomOption<OptionsWithPosition>();
 
-export function CargoForm() {
-  const router = useRouter();
+interface CargoFormProps {
+  defaultValues?: CargoSchema;
+  companies: Option[];
+}
 
-  const [distance, setDistance] = useState(0);
+export function CargoForm(props: CargoFormProps) {
+  const { defaultValues, companies } = props;
+  const router = useRouter();
 
   const formRef = useRef<FormRef<CargoSchema> | null>(null);
   const setValue = formRef.current?.methods.setValue;
@@ -80,13 +94,21 @@ export function CargoForm() {
 
   const { location } = useGeolocation();
 
+  const isNewItem = !defaultValues;
+
   const [, createCargo, isCreatingCargo] = useActionState(
     async (_: unknown, values: CargoSchema) => {
-      const response = await fetch("/api/cargos", {
-        method: "POST",
-        body: JSON.stringify(values),
-      });
-      if (response.ok) router.replace("/cargo");
+      const response = await fetch(
+        `/api/cargos${isNewItem ? "" : `/${defaultValues?.id}`}`,
+        {
+          method: isNewItem ? "POST" : "PUT",
+          body: JSON.stringify(values),
+        }
+      );
+      if (response.ok) {
+        if (isNewItem) router.replace("/cargo");
+        else router.refresh();
+      }
     },
     null
   );
@@ -114,6 +136,10 @@ export function CargoForm() {
     ? watch(["originLat", "originLng", "destinationLat", "destinationLng"])
     : [];
 
+  const [distanceAprox, status] = watch
+    ? watch(["distanceAprox", "status"])
+    : [];
+
   const getDistance = useCallback(async () => {
     if (!originLat || !originLng || !destinationLat || !destinationLng) return;
     const { items } = await fetchApi<HereRet>(
@@ -124,7 +150,6 @@ export function CargoForm() {
     );
     const [first] = items;
     if (first?.distance) {
-      setDistance(first.distance);
       if (setValue) setValue("distanceAprox", first.distance);
     }
   }, [originLat, originLng, destinationLat, destinationLng, setValue]);
@@ -133,8 +158,10 @@ export function CargoForm() {
     getDistance();
   }, [getDistance]);
 
+  console.log(defaultValues);
+
   return (
-    <Form
+    <Form<CargoSchema>
       ref={formRef}
       onSubmit={(values) =>
         startTransition(() => {
@@ -143,13 +170,22 @@ export function CargoForm() {
       }
       schema={cargoSchema}
       isDisabled={isCreatingCargo}
+      defaultValues={{
+        status: "AVAILABLE",
+        ...defaultValues,
+        companyId: defaultValues?.companyId || undefined,
+        approvedAt: defaultValues?.approvedAt || undefined,
+        assignedToId: defaultValues?.companyId || undefined,
+        requestedAt: defaultValues?.requestedAt || undefined,
+        requestedById: defaultValues?.requestedById || undefined,
+      }}
     >
       <Paper>
         {isCreatingCargo && <LinearProgress />}
         <Stack spacing={2} padding={3}>
           <Stack spacing={1} direction="row">
             <TextInput id="title" label="Title" />
-            <TextInput id="company" label="Company" />
+            <Dropdown id="companyId" label="Company" options={companies} />
           </Stack>
           <Stack spacing={1} direction="row">
             <Autocomplete
@@ -193,8 +229,10 @@ export function CargoForm() {
             <NumberInput id="destinationLat" label="Latitude" isDisabled />
             <NumberInput id="destinationLng" label="Longitude" isDisabled />
           </Stack>
-          <Collapse in={!!distance} sx={{ alignSelf: "end" }}>
-            <Typography>{`Distance Aprox.: ${distance / 1000} km`}</Typography>
+          <Collapse in={!!distanceAprox} sx={{ alignSelf: "end" }}>
+            <Typography>{`Distance Aprox.: ${
+              (distanceAprox || 0) / 1000
+            } km`}</Typography>
           </Collapse>
 
           <Stack spacing={1} direction="row">
@@ -216,9 +254,17 @@ export function CargoForm() {
 
           <DateTimeInput id="deliveryDateTime" label="Deliver Before" />
 
+          {status && (
+            <Alert severity={severityByStatus[status]}>{status}</Alert>
+          )}
+
           <Box alignSelf="self-end">
-            <Button type="submit" disabled={isCreatingCargo}>
-              Submit
+            <Button
+              variant="contained"
+              type="submit"
+              disabled={isCreatingCargo}
+            >
+              {isNewItem ? "Submit" : "Update"}
             </Button>
           </Box>
         </Stack>

@@ -52,7 +52,7 @@ const meta: Meta<typeof Form> = {
       <Stack spacing={2}>
         <Stack spacing={1} direction="row">
           <TextInput id="title" label="Title" />
-          <TextInput id="company" label="Company" />
+          <TextInput id="companyId" label="Company" />
         </Stack>
         <Stack spacing={1} direction="row">
           <Autocomplete

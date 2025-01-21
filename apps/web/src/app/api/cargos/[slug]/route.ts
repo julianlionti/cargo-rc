@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CargoSchema } from "@utils/dist";
+import { Console } from "console";
 import { NextResponse } from "next/server";
 import { db } from "rc/lib/db";
 import { responseError } from "rc/utils/api.utils";
@@ -221,15 +223,19 @@ export async function PUT(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
-    const slug = (await params).slug;
+    const { slug } = await params;
+    const { id, ...data }: CargoSchema = await request.json();
+    console.log(slug, data);
 
-    const data = await request.json();
     const updatedCargo = await db.cargo.update({
       where: { id: slug },
-      data,
+      data: {
+        ...data,
+      },
     });
     return NextResponse.json(updatedCargo);
   } catch (error) {
+    console.log(error);
     return responseError("Failed to update cargo", 400);
   }
 }

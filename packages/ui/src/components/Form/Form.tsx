@@ -18,7 +18,7 @@ export interface FormRef<T extends FieldValues> {
   methods: UseFormReturn<T>;
 }
 
-interface FormProps<T extends FieldValues, Z extends ZodTypeAny> {
+interface FormProps<T extends FieldValues, Z extends ZodTypeAny = ZodTypeAny> {
   schema?: Z;
   children: ReactNode;
   ref?: Ref<FormRef<T>>;
@@ -28,7 +28,7 @@ interface FormProps<T extends FieldValues, Z extends ZodTypeAny> {
   onSubmit?: (values: z.infer<Z>) => void;
 }
 
-export default function Form<T extends FieldValues, Z extends ZodTypeAny>({
+export default function Form<T extends FieldValues, Z extends ZodTypeAny = ZodTypeAny>({
   ref,
   children,
   schema,

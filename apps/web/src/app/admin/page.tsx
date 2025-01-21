@@ -10,7 +10,7 @@ import {
   Grid2,
   Stack,
 } from "@mui/material";
-import { indigo } from "@mui/material/colors";
+import Footer from "rc/components/shared/Footer";
 import Header from "rc/components/shared/Header";
 import { useState } from "react";
 
@@ -158,20 +158,7 @@ export default function Admin() {
         </Grid2>
       </Container>
       {/* Footer */}
-      <Box
-        sx={{
-          backgroundColor: indigo[500],
-          padding: "20px 0",
-          color: "white",
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="body2">Cargo RC - All Rights Reserved</Typography>
-      </Box>
+      <Footer />
     </Box>
   );
 }

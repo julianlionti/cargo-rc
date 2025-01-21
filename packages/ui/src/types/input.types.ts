@@ -5,5 +5,5 @@ export type CommonInputProps = Partial<{
 
 export interface Option {
   id: string;
-  title?: string;
+  name?: string;
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
+export { default as nextAuth } from "next-auth/middleware";
 
 const signinRouter = "/api/auth/signin";
 
@@ -12,14 +13,11 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(signinRouter, req.url));
   }
 
-  // Only allow access to routes under '/admin/*' and '/driver/*' for logged-in users
-  if ((req.url.includes("/admin") || req.url.includes("/driver")) && !session) {
-    return NextResponse.redirect(new URL(signinRouter, req.url));
-  }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin", "/driver"], // Apply middleware only to these routes
+  matcher: [
+    "/((?!api|public|_next/static|_next/image|static|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$|$).*)",
+  ], // Apply middleware only to these routes
 };

@@ -229,7 +229,9 @@
  *                   description: Error message
  */
 
+import { Cargo } from "@prisma/client";
 import { CargoSchema } from "@utils/dist";
+import { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "rc/lib/db";
 
@@ -246,12 +248,13 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const body: CargoSchema = await request.json();
   const {
     title,
     origin,
     destination,
     weight,
-    company,
+    companyId,
     reward,
     size,
     urgency,
@@ -261,29 +264,44 @@ export async function POST(request: NextRequest) {
     destinationLat,
     destinationLng,
     deliveryDateTime,
-  } = (await request.json()) satisfies CargoSchema;
-
+  } = body;
+  console.log({
+    title,
+    origin,
+    destination,
+    weight,
+    companyId: companyId || null,
+    reward,
+    size,
+    urgency,
+    originLat,
+    originLng,
+    distanceAprox,
+    destinationLat,
+    destinationLng,
+    deliveryDateTime,
+  });
   try {
-    const newCargo = await db.cargo.create({
+    const cargo = await db.cargo.create({
       data: {
         title,
         origin,
         destination,
         weight,
-        company,
+        companyId: companyId || null,
         reward,
         size,
         urgency,
-        distanceAprox,
         originLat,
         originLng,
+        distanceAprox,
         destinationLat,
         destinationLng,
         deliveryDateTime,
-        status: "AVAILABLE", // Default status
+        status: "AVAILABLE",
       },
     });
-    return NextResponse.json(newCargo, { status: 201 });
+    return NextResponse.json(cargo, { status: 201 });
   } catch (error) {
     console.error("Failed to create cargo:", error);
     return NextResponse.json(

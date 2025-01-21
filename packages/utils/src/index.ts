@@ -9,3 +9,4 @@ export const multiply = (a: number, b: number): number => {
 };
 
 export * from "./schemas/cargo.schema";
+export * from "./utils/number.utils";

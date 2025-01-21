@@ -1,24 +1,27 @@
-"use server";
+interface FetchOptions<B> extends Omit<RequestInit, "method" | "body"> {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  body?: B;
+}
 
-import serverConfig from "rc/config/server.config";
-
-const BASE_URL = serverConfig.NEXTAUTH_URL;
-
-export async function fetchApi<T>(
+export async function fetchApi<T, B = undefined>(
   endpoint: string,
-  options: RequestInit = {}
+  options: FetchOptions<B extends undefined ? T : B> = {}
 ): Promise<T> {
-  const url = endpoint.includes("http") ? endpoint : `${BASE_URL}${endpoint}`;
-  const defaultHeaders = {
-    "Content-Type": "application/json",
-  };
+  let url = endpoint;
 
+  /** Check if is server to add BASE_URL */
+  const isServer = typeof window === "undefined";
+  if (isServer) {
+    const { default: serverConfig } = await import("rc/config/server.config");
+    const BASE_URL = serverConfig.NEXTAUTH_URL;
+    url = `${BASE_URL}${url}`;
+  }
+
+  const { method = "GET", body } = options;
   const response = await fetch(url, {
     ...options,
-    headers: {
-      ...defaultHeaders,
-      ...(options.headers || {}),
-    },
+    body: body ? JSON.stringify(body) : undefined,
+    method,
   });
 
   if (!response.ok) {

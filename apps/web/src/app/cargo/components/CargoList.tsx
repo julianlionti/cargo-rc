@@ -6,6 +6,7 @@ import { Cargo, CargoSize, CargoUrgency } from "@prisma/client";
 import { createForm, Form, FormRef } from "@ui";
 import { CargoSchema } from "@utils/dist";
 import { useRef, useState } from "react";
+import CargoListItem from "./CargoListItem";
 
 interface Filter
   extends Partial<Pick<CargoSchema, "reward" | "size" | "weight" | "urgency">> {
@@ -41,8 +42,8 @@ export default function CargoList({ data }: CargoListProps) {
                   id="distance"
                   label="Distance"
                   options={[
-                    { id: "short", title: "Short Distance" },
-                    { id: "long", title: "Long Distance" },
+                    { id: "short", name: "Short Distance" },
+                    { id: "long", name: "Long Distance" },
                   ]}
                 />
                 <Dropdown
@@ -83,42 +84,7 @@ export default function CargoList({ data }: CargoListProps) {
                   (filters.urgency ? cargo.urgency === filters.urgency : true)
               )
               .map((cargo) => (
-                <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={cargo.id}>
-                  <Paper sx={{ padding: 3, boxShadow: 2, overflow: "hidden" }}>
-                    <Typography variant="h6">{cargo.title}</Typography>
-                    <Typography>
-                      Origin: <b>{cargo.origin}</b>
-                    </Typography>
-                    <Typography>
-                      Destination: <b>{cargo.destination}</b>
-                    </Typography>
-                    <Typography fontWeight="bold">
-                      Distance (Aprox):{" "}
-                      <b>{`${cargo.distanceAprox / 1000} Km`}</b>
-                    </Typography>
-                    <Typography>Size: {cargo.size}</Typography>
-                    <Typography>
-                      Reward: <b>${cargo.reward}</b>
-                    </Typography>
-                    <Typography>Urgency: {cargo.urgency}</Typography>
-                    <Typography
-                      color={
-                        cargo.status === "AVAILABLE" ? "success" : undefined
-                      }
-                    >
-                      Status: <b>{cargo.status}</b>
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                      sx={{ marginTop: 2 }}
-                      disabled={cargo.status !== "AVAILABLE"}
-                    >
-                      Pick This Cargo
-                    </Button>
-                  </Paper>
-                </Grid2>
+                <CargoListItem key={cargo.id} item={cargo} />
               ))}
           </Grid2>
         </Grid2>

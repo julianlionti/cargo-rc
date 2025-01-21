@@ -7,6 +7,8 @@ import {
   useFormContext,
 } from "react-hook-form";
 import { dateOnChange, dateValue } from "../../../utils/dateinput.utils";
+import { useEffect } from "react";
+import dayjs from "dayjs";
 
 interface DateTimeInputProps<T extends FieldValues> {
   id: Path<T>;
@@ -17,7 +19,19 @@ export default function DateTimeInput<T extends FieldValues>({
   id,
   label,
 }: DateTimeInputProps<T>) {
-  const { control } = useFormContext<T>();
+  const { control, getValues, setValue } = useFormContext<T>();
+
+  const values = getValues();
+  const filedValue = values[id];
+
+  useEffect(
+    function convertValueFromStringToDate() {
+      if (typeof filedValue === "string") {
+        setValue(id, dayjs(filedValue).toDate() as PathValue<T, Path<T>>);
+      }
+    },
+    [id, filedValue, setValue]
+  );
 
   return (
     <Controller

@@ -6,6 +6,7 @@ import dts from "vite-plugin-dts";
 export default defineConfig({
   plugins: [dts(), react()],
   build: {
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       name: "Ui",
@@ -32,7 +33,7 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
           "@mui/material": "MuiMaterial",
-          "@mui/x-date-pickers":"MuiXDatePickers",
+          "@mui/x-date-pickers": "MuiXDatePickers",
           "@emotion/react": "EmotionReact",
           "@emotion/styled": "EmotionStyled",
         },

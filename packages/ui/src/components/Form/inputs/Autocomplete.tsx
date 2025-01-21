@@ -13,10 +13,12 @@ import {
 } from "react-hook-form";
 import { CommonInputProps, Option } from "../../../types/input.types";
 import { useRef, useState } from "react";
+import { getFinalOptionList } from "../../../utils/listInput.utils";
 
 interface AutocompleteProps<T extends FieldValues, O extends Option>
   extends CommonInputProps {
   id: Path<T>;
+  labelId?: Path<T>;
   options: O[];
   isLoading?: boolean;
   onTextChanged?: (debounced: string) => void;
@@ -25,6 +27,7 @@ interface AutocompleteProps<T extends FieldValues, O extends Option>
 
 export default function Autocomplete<T extends FieldValues, O extends Option>({
   id,
+  labelId,
   label,
   isDisabled,
   isLoading,
@@ -32,9 +35,13 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
   onOptionSelected,
   onTextChanged,
 }: AutocompleteProps<T, O>) {
-  const { control } = useFormContext<T>();
+  const { control, getValues } = useFormContext<T>();
 
   const [inputValue, setInputValue] = useState("");
+
+  const values = getValues();
+  const fieldValue = values[id];
+  const labelValue = labelId ? values[labelId] : "";
 
   const debouncedOnTextChanged = useRef(
     debounce((input: string) => {
@@ -47,6 +54,8 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
     debouncedOnTextChanged.current(next);
   };
 
+  const finalOptions = getFinalOptionList<O>(options, fieldValue, labelValue);
+  console.log(finalOptions);
   return (
     <Controller
       name={id}
@@ -59,7 +68,7 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
           autoComplete
           value={
             field.value
-              ? options.find((e) => e.id === field.value) || null
+              ? finalOptions.find((e) => e.id === field.value) || null
               : null
           }
           onChange={(_, newValue) => {
@@ -73,8 +82,8 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
           isOptionEqualToValue={(option) => option.id === field.value}
           fullWidth
           disabled={field.disabled || isDisabled}
-          options={options}
-          getOptionLabel={(option) => option.title || option.id}
+          options={finalOptions}
+          getOptionLabel={(option) => option.name || option.id}
           renderInput={(textFieldProps) => (
             <TextField
               {...textFieldProps}
