@@ -2,6 +2,8 @@
 import { indigo, grey, teal } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 
+export const toolbarMinHeight =  56;
+
 // Create a light theme for the app
 export const lightTheme = createTheme({
   palette: {
@@ -16,6 +18,9 @@ export const lightTheme = createTheme({
       primary: grey[900], // Dark text on light background
       secondary: grey[700], // Secondary text
     },
+  },
+  mixins: {
+    toolbar: { minHeight: toolbarMinHeight },
   },
   typography: {
     h1: {

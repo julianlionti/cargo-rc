@@ -14,7 +14,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import Header from "rc/components/shared/Header";
+import Header from "rc/components/shared/Layout/Header";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { Cargo } from "@prisma/client";

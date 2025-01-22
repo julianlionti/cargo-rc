@@ -1,11 +1,12 @@
+"use client";
 import {
-  AppBar,
   Toolbar,
   Typography,
   Box,
   Stack,
   Link,
   IconButton,
+  Paper,
 } from "@mui/material";
 import {
   LocationOn,
@@ -14,12 +15,32 @@ import {
   Twitter,
   LinkedIn,
 } from "@mui/icons-material";
+import { useEffect, useRef } from "react";
+import { useLayoutStore } from "./store/Layout";
 
 export default function Footer() {
+  const appBarRef = useRef<HTMLDivElement>(null);
   const currentYear = new Date().getFullYear(); // Safe to use here as this is a server component
+  const setFooterHeight = useLayoutStore(
+    ({ setFooterHeight }) => setFooterHeight
+  );
+
+  useEffect(() => {
+    const resizeCb = () => {
+      const footerHeight = appBarRef.current?.clientHeight;
+      if (footerHeight) setFooterHeight(() => footerHeight);
+    };
+
+    resizeCb();
+
+    window.addEventListener("resize", resizeCb);
+    return () => {
+      window.removeEventListener("resize", resizeCb);
+    };
+  }, [setFooterHeight]);
 
   return (
-    <AppBar position="fixed" sx={{ bottom: 0, top: "auto", py: 2 }}>
+    <Paper square sx={{ gridColumn: "1 / -1", p: 2, opacity: 0.5 }}>
       <Toolbar>
         <Box flex={1}>
           <Stack spacing={1}>
@@ -73,6 +94,6 @@ export default function Footer() {
           &copy; {currentYear} Cargo RC. All rights reserved.
         </Typography>
       </Toolbar>
-    </AppBar>
+    </Paper>
   );
 }

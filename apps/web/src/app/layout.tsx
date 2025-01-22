@@ -2,7 +2,6 @@ import { appConfig } from "@config";
 import { CssBaseline } from "@mui/material";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
-import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { Roboto } from "next/font/google";
 import Providers from "rc/components/Providers";
@@ -32,11 +31,9 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={`${roboto.variable}`}>
-        <Providers session={session}>
+        <Providers session={session} messages={messages} locale={locale}>
           <CssBaseline />
-          <NextIntlClientProvider messages={messages}>
-            {children}
-          </NextIntlClientProvider>
+          {children}
         </Providers>
       </body>
     </html>

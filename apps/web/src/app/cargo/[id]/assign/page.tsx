@@ -1,8 +1,8 @@
 import { Box, Container, Grid2 } from "@mui/material";
 
-import Header from "rc/components/shared/Header";
+import Header from "rc/components/shared/Layout/Header";
 import { Cargo } from "@prisma/client";
-import Footer from "rc/components/shared/Footer";
+import Footer from "rc/components/shared/Layout/Footer";
 import { fetchApi } from "rc/utils/fetchApi";
 import CargoInformation from "../../components/CargoInformation";
 

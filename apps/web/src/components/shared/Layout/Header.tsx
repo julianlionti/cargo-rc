@@ -6,13 +6,13 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  AppBar,
   Toolbar,
   Stack,
   Container,
   Divider,
   Box,
   Tooltip,
+  Paper,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { signOut } from "next-auth/react";
@@ -28,7 +28,16 @@ export interface HeaderProps {
   title?: string;
 }
 
-export default function Header({ buttons = [], title }: HeaderProps) {
+export default function Header({
+  buttons = [
+    { title: "About Us", to: "/about" },
+    { title: "Features", to: "/features" },
+    { title: "Pricing", to: "/pricing" },
+    { title: "FAQ", to: "/faq" },
+    { title: "Contact Us", to: "/contact" },
+  ],
+  title,
+}: HeaderProps) {
   const { user } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -46,7 +55,15 @@ export default function Header({ buttons = [], title }: HeaderProps) {
 
   return (
     <>
-      <AppBar>
+      <Paper
+        square
+        component="header"
+        sx={{
+          bgcolor: "primary.main",
+          gridColumn: "1 / -1",
+          boxShadow: ({ shadows }) => shadows[4],
+        }}
+      >
         <Toolbar>
           <Container>
             <Stack
@@ -56,9 +73,17 @@ export default function Header({ buttons = [], title }: HeaderProps) {
               alignItems="center"
               px={4}
             >
-              <Typography variant="h6" color="white" fontWeight={700} flex={1}>
-                {title}
-              </Typography>
+              <Box flex={1}>
+                <Typography
+                  component={Button}
+                  href="/"
+                  variant="h6"
+                  color="white"
+                  fontWeight={700}
+                >
+                  {title}
+                </Typography>
+              </Box>
               {/* Display all buttons always */}
               <Stack
                 direction="row"
@@ -88,7 +113,7 @@ export default function Header({ buttons = [], title }: HeaderProps) {
             </Stack>
           </Container>
         </Toolbar>
-      </AppBar>
+      </Paper>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -106,6 +131,13 @@ export default function Header({ buttons = [], title }: HeaderProps) {
             </Typography>
           </Box>
         )}
+        <Box display={{ xs: "block", md: "none" }}>
+          {buttons.map((button) => (
+            <MenuItem key={button.to} href={button.to} component={Button}>
+              {button.title}
+            </MenuItem>
+          ))}
+        </Box>
         <Divider />
         <MenuItem onClick={handleMenuClose}>Preferences</MenuItem>
         <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>

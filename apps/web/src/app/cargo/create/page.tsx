@@ -1,5 +1,5 @@
 import { Container, Typography, Grid2 } from "@mui/material";
-import Header from "rc/components/shared/Header";
+import Header from "rc/components/shared/Layout/Header";
 import { CargoForm } from "../components/CargoForm";
 import { fetchApi } from "rc/utils/fetchApi";
 import { Company } from "@prisma/client";

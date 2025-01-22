@@ -1,6 +1,6 @@
 import { Button, Container, Typography, Box } from "@mui/material";
-import Header from "rc/components/shared/Header";
-import Footer from "rc/components/shared/Footer";
+import Header from "rc/components/shared/Layout/Header";
+import Footer from "rc/components/shared/Layout/Footer";
 import CargoList from "./components/CargoList";
 import { Cargo } from "@prisma/client";
 import { fetchApi } from "rc/utils/fetchApi";

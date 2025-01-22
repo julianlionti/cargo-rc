@@ -2,12 +2,9 @@
 
 import { Box, Button, Container, Grid2, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
-import Header from "rc/components/shared/Header";
-import { appConfig } from "@config";
-import FullPage from "rc/components/shared/FullPage";
-import FullBody from "rc/components/shared/FullBody";
 import { fetchApi } from "rc/utils/fetchApi";
 import { Feature } from "./api/features/route";
+import FullPage from "rc/components/shared/Layout/FullPage";
 
 export default async function Home() {
   const t = await getTranslations();
@@ -15,20 +12,8 @@ export default async function Home() {
 
   return (
     <FullPage>
-      {/* Header */}
-      <Header
-        title={appConfig.appName}
-        buttons={[
-          { title: "About Us", to: "/about" },
-          { title: "Features", to: "/features" },
-          { title: "Pricing", to: "/pricing" },
-          { title: "FAQ", to: "/faq" },
-          { title: "Contact Us", to: "/contact" },
-        ]}
-      />
-
       {/* Hero Section */}
-      <FullBody>
+      <Box height="100%">
         <Box
           sx={{
             backgroundImage: 'url("/hero-truck.webp")',
@@ -40,6 +25,7 @@ export default async function Home() {
             position: "relative", // Needed to position the overlay
             overflow: "hidden", // Ensures no child elements extend beyond this box
             display: "flex",
+            height: "100%",
           }}
         >
           <Box
@@ -90,17 +76,19 @@ export default async function Home() {
             </Container>
           </Box>
         </Box>
-      </FullBody>
+      </Box>
 
       {/* Features Section */}
-      <FullBody
-      // sx={{padding: "80px 0",backgroundColor: "#f4f4f4",}}
-      >
-        <Container>
-          <Typography variant="h3" align="center" sx={{ mb: 4 }}>
-            {t("features.title")}
-          </Typography>
+      <Box height="100%">
+        <Container
+          sx={{ height: "100%", display: "flex", alignItems: "center" }}
+        >
           <Grid2 container spacing={4}>
+            <Grid2 size={12}>
+              <Typography variant="h3" align="center" sx={{ mb: 4 }}>
+                {t("features.title")}
+              </Typography>
+            </Grid2>
             {features.map((feature) => (
               <Grid2 key={feature.title} size={{ md: 4, xs: 12 }}>
                 <Box
@@ -121,17 +109,17 @@ export default async function Home() {
             ))}
           </Grid2>
         </Container>
-      </FullBody>
+      </Box>
 
       {/* CTA Section */}
-      <FullBody bgColor="primary.main">
-        <Container sx={{ flex: 1, display: "flex" }}>
+      <Box height="100%" bgcolor="primary.main">
+        <Container sx={{ height: "100%" }}>
           <Grid2
+            height="100%"
             size={12}
             container
             direction="column"
             alignItems="center"
-            flex={1}
             justifyContent="center"
             color="common.white"
           >
@@ -146,7 +134,7 @@ export default async function Home() {
             </Button>
           </Grid2>
         </Container>
-      </FullBody>
+      </Box>
     </FullPage>
   );
 }

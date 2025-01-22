@@ -10,8 +10,8 @@ import {
   Grid2,
   Stack,
 } from "@mui/material";
-import Footer from "rc/components/shared/Footer";
-import Header from "rc/components/shared/Header";
+import Footer from "rc/components/shared/Layout/Footer";
+import Header from "rc/components/shared/Layout/Header";
 import { useState } from "react";
 
 export default function Admin() {

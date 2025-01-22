@@ -7,7 +7,7 @@ import {
   Grid2,
 } from "@mui/material";
 import { Cargo } from "@prisma/client";
-import Header from "rc/components/shared/Header";
+import Header from "rc/components/shared/Layout/Header";
 import { DriverWithUser } from "rc/types/driver";
 import { fetchApi } from "rc/utils/fetchApi";
 import StatusAlert from "../../components/shared/StatusAlert";
