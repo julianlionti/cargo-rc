@@ -1,84 +1,101 @@
 // apps/web/pages/index.tsx
 
-import { Box, Container, Grid2, Typography, Button } from "@mui/material";
-import { indigo } from "@mui/material/colors";
+import { Box, Button, Container, Grid2, Typography } from "@mui/material";
 import { getTranslations } from "next-intl/server";
 import Header from "rc/components/shared/Header";
 import { appConfig } from "@config";
-import Footer from "rc/components/shared/Footer";
+import FullPage from "rc/components/shared/FullPage";
+import FullBody from "rc/components/shared/FullBody";
+import { fetchApi } from "rc/utils/fetchApi";
+import { Feature } from "./api/features/route";
 
 export default async function Home() {
   const t = await getTranslations();
-
-  const features = [
-    {
-      title: t("features.delivery.title"),
-      description: t("features.delivery.description"),
-    },
-    {
-      title: t("features.tracking.title"),
-      description: t("features.tracking.description"),
-    },
-    {
-      title: t("features.support.title"),
-      description: t("features.support.description"),
-    },
-  ];
+  const features = await fetchApi<Feature[]>("api/features");
 
   return (
-    <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <FullPage>
       {/* Header */}
       <Header
         title={appConfig.appName}
         buttons={[
-          { title: "Contacts", to: "contacts" },
-          { title: "Features", to: "features" },
-          { title: "Home", to: "home" },
+          { title: "About Us", to: "/about" },
+          { title: "Features", to: "/features" },
+          { title: "Pricing", to: "/pricing" },
+          { title: "FAQ", to: "/faq" },
+          { title: "Contact Us", to: "/contact" },
         ]}
       />
 
       {/* Hero Section */}
-      <Box
-        sx={{
-          backgroundImage: 'url("/hero-truck.webp")',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: "100px 0",
-          color: "white",
-          position: "relative", // Needed to position the overlay
-          overflow: "hidden", // Ensures no child elements extend beyond this box
-        }}
-      >
-        {/* Overlay */}
+      <FullBody>
         <Box
           sx={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: "rgba(0, 0, 0, 0.5)", // Semi-transparent black overlay
-            zIndex: 1,
+            backgroundImage: 'url("/hero-truck.webp")',
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            padding: "100px 0",
+            color: "white",
+            flex: 1,
+            position: "relative", // Needed to position the overlay
+            overflow: "hidden", // Ensures no child elements extend beyond this box
+            display: "flex",
           }}
-        />
-        {/* Content */}
-        <Container sx={{ position: "relative", zIndex: 2 }}>
-          <Grid2 container direction="column" alignItems="center">
-            <Typography variant="h2" sx={{ fontWeight: 700, mb: 2 }}>
-              {t("hero.title")}
-            </Typography>
-            <Typography variant="h6" sx={{ mb: 4 }}>
-              {t("hero.subtitle")}
-            </Typography>
-            <Button variant="contained" color="secondary">
-              {t("hero.cta")}
-            </Button>
-          </Grid2>
-        </Container>
-      </Box>
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: "rgba(0, 0, 0, 0.5)", // Semi-transparent black overlay
+              zIndex: 1,
+            }}
+          />
+          <Box
+            position="relative"
+            top={0}
+            right={0}
+            bottom={0}
+            left={0}
+            zIndex={2}
+            flex={1}
+            display="flex"
+          >
+            <Container sx={{ display: "flex" }}>
+              <Grid2
+                size={12}
+                container
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                flex={1}
+                mb={`${56}px`}
+              >
+                <Typography
+                  variant="h2"
+                  sx={{ fontWeight: 700, mb: 2 }}
+                  align="center"
+                >
+                  {t("hero.title")}
+                </Typography>
+                <Typography variant="h6" sx={{ mb: 4 }} align="center">
+                  {t("hero.subtitle")}
+                </Typography>
+                <Button variant="contained" color="secondary">
+                  {t("hero.cta")}
+                </Button>
+              </Grid2>
+            </Container>
+          </Box>
+        </Box>
+      </FullBody>
 
       {/* Features Section */}
-      <Box sx={{ padding: "80px 0", backgroundColor: "#f4f4f4" }}>
+      <FullBody
+      // sx={{padding: "80px 0",backgroundColor: "#f4f4f4",}}
+      >
         <Container>
           <Typography variant="h3" align="center" sx={{ mb: 4 }}>
             {t("features.title")}
@@ -104,18 +121,24 @@ export default async function Home() {
             ))}
           </Grid2>
         </Container>
-      </Box>
+      </FullBody>
 
       {/* CTA Section */}
-      <Box
-        sx={{ backgroundColor: indigo[500], color: "white", padding: "50px 0" }}
-      >
-        <Container>
-          <Grid2 container direction="column" alignItems="center">
+      <FullBody bgColor="primary.main">
+        <Container sx={{ flex: 1, display: "flex" }}>
+          <Grid2
+            size={12}
+            container
+            direction="column"
+            alignItems="center"
+            flex={1}
+            justifyContent="center"
+            color="common.white"
+          >
             <Typography variant="h4" sx={{ mb: 2 }}>
               {t("cta.title")}
             </Typography>
-            <Typography variant="h6" sx={{ mb: 4 }}>
+            <Typography variant="h6" sx={{ mb: 4 }} align="center">
               {t("cta.subtitle")}
             </Typography>
             <Button variant="contained" color="secondary">
@@ -123,10 +146,7 @@ export default async function Home() {
             </Button>
           </Grid2>
         </Container>
-      </Box>
-
-      {/* Footer */}
-      <Footer />
-    </Box>
+      </FullBody>
+    </FullPage>
   );
 }

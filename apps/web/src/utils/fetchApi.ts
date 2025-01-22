@@ -24,10 +24,12 @@ export async function fetchApi<T, B = undefined>(
     method,
   });
 
+  const jsonResponse = await response.json();
+
   if (!response.ok) {
-    const error = await response.json();
+    const error = jsonResponse;
     throw new Error(error.message || "Something went wrong");
   }
 
-  return response.json();
+  return jsonResponse;
 }

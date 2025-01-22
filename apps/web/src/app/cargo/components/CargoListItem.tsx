@@ -18,7 +18,7 @@ export default function CargoListItem({ item }: CargoListItemProps) {
         <Button
           variant="outlined"
           color="error"
-          href={`/cargo/${item.id}/edit`}
+          href={`/cargo/${item.id}/cancel`}
         >
           Cancel Cargo
         </Button>
@@ -26,13 +26,13 @@ export default function CargoListItem({ item }: CargoListItemProps) {
     ),
     PENDING: (
       <Stack spacing={1}>
-        <Button variant="contained" href={`/cargo/${item.id}/edit`}>
+        <Button variant="contained" href={`/cargo/${item.id}/driver`}>
           See driver details
         </Button>
         <Button
           variant="outlined"
           color="error"
-          href={`/cargo/${item.id}/edit`}
+          href={`/cargo/${item.id}/cancel`}
         >
           Cancel Cargo
         </Button>
@@ -40,13 +40,13 @@ export default function CargoListItem({ item }: CargoListItemProps) {
     ),
     CANCELLED: (
       <Stack spacing={1}>
-        <Button variant="contained" href={`/cargo/${item.id}/edit`}>
+        <Button variant="contained" href={`/cargo/${item.id}/cancel`}>
           Get reasons
         </Button>
         <Button
           variant="outlined"
           color="error"
-          href={`/cargo/${item.id}/edit`}
+          href={`/cargo/${item.id}/remove`}
         >
           Remove Cargo
         </Button>
@@ -54,30 +54,30 @@ export default function CargoListItem({ item }: CargoListItemProps) {
     ),
     DELIVERED: (
       <Stack spacing={1}>
-        <Button variant="contained" href={`/cargo/${item.id}/edit`}>
+        <Button variant="contained" href={`/cargo/${item.id}/delivered`}>
           See Cargo Information
         </Button>
-        <Button variant="outlined" href={`/cargo/${item.id}/edit`}>
+        <Button variant="outlined" href={`/cargo/${item.id}/driver`}>
           Rank Driver
         </Button>
       </Stack>
     ),
     IN_TRANSIT: (
       <Stack spacing={1}>
-        <Button variant="contained" href={`/cargo/${item.id}/edit`}>
+        <Button variant="contained" href={`/cargo/${item.id}/location`}>
           Get Cargo Location
         </Button>
-        <Button variant="outlined" href={`/cargo/${item.id}/edit`}>
+        <Button variant="outlined" href={`/cargo/${item.id}/driver`}>
           Contact Driver
         </Button>
       </Stack>
     ),
     PICKED_UP: (
       <Stack spacing={1}>
-        <Button variant="contained" href={`/cargo/${item.id}/edit`}>
+        <Button variant="contained" href={`/cargo/${item.id}/location`}>
           Get Cargo Location
         </Button>
-        <Button variant="outlined" href={`/cargo/${item.id}/edit`}>
+        <Button variant="outlined" href={`/cargo/${item.id}/driver`}>
           Contact Driver
         </Button>
       </Stack>

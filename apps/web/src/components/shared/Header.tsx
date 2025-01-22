@@ -1,30 +1,35 @@
 "use client";
 
 import {
-  Box,
   Button,
-  Container,
-  Grid2,
   Typography,
   Menu,
   MenuItem,
+  IconButton,
+  AppBar,
+  Toolbar,
+  Stack,
+  Container,
+  Divider,
+  Box,
+  Tooltip,
 } from "@mui/material";
-import { indigo } from "@mui/material/colors";
-import { useSession, signOut } from "next-auth/react";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import { signOut } from "next-auth/react";
 import { useState } from "react";
+import useUser from "rc/hooks/useUser";
 
 interface ButtonProps {
   title: string;
   to: string;
 }
-interface HeaderProps {
+export interface HeaderProps {
   buttons?: ButtonProps[];
   title?: string;
 }
 
 export default function Header({ buttons = [], title }: HeaderProps) {
-  const { data } = useSession();
-  const { user } = data || {};
+  const { user } = useUser();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -40,62 +45,71 @@ export default function Header({ buttons = [], title }: HeaderProps) {
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: indigo[500],
-        padding: "20px 0",
-        boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <Container>
-        <Grid2 container justifyContent="space-between" alignItems="center">
-          <Typography variant="h6" color="white" fontWeight={700}>
-            {title}
-          </Typography>
-          <Grid2>
-            {/* Display all buttons always */}
-            {buttons.map((button) => (
-              <Button
-                key={button.title}
-                variant="text"
-                sx={{ color: "white", textTransform: "none" }}
-                component="button"
-                href={button.to}
+    <>
+      <AppBar>
+        <Toolbar>
+          <Container>
+            <Stack
+              flex={1}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              px={4}
+            >
+              <Typography variant="h6" color="white" fontWeight={700} flex={1}>
+                {title}
+              </Typography>
+              {/* Display all buttons always */}
+              <Stack
+                direction="row"
+                alignItems="center"
+                display={{ xs: "none", md: "block" }}
               >
-                {button.title}
-              </Button>
-            ))}
-            {/* Display username if logged in */}
-            {user && (
-              <Box sx={{ display: "inline", marginRight: 2 }}>
-                <Typography
-                  variant="body1"
-                  color="white"
-                  sx={{ display: "inline", marginRight: 2 }}
-                >
-                  {user.name || user.email}
-                </Typography>
-                <Button
-                  variant="text"
-                  sx={{ color: "white", textTransform: "none" }}
-                  onClick={handleMenuOpen}
-                >
-                  Menu
-                </Button>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleMenuClose}
-                  keepMounted
-                >
-                  <MenuItem onClick={handleMenuClose}>Preferences</MenuItem>
-                  <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-                </Menu>
-              </Box>
-            )}
-          </Grid2>
-        </Grid2>
-      </Container>
-    </Box>
+                {buttons.map((button) => (
+                  <Button
+                    key={button.title}
+                    variant="text"
+                    sx={{
+                      color: "white",
+                      textTransform: "none",
+                    }}
+                    href={button.to}
+                  >
+                    {button.title}
+                  </Button>
+                ))}
+              </Stack>
+              {/* Display username if logged in */}
+              <IconButton onClick={handleMenuOpen}>
+                <Tooltip title="Menu">
+                  <MenuIcon sx={{ color: "common.white" }} />
+                </Tooltip>
+              </IconButton>
+            </Stack>
+          </Container>
+        </Toolbar>
+      </AppBar>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        keepMounted
+      >
+        {/* User Info Section */}
+        {user && (
+          <Box sx={{ px: 2, py: 1 }}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              {user.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {user.email}
+            </Typography>
+          </Box>
+        )}
+        <Divider />
+        <MenuItem onClick={handleMenuClose}>Preferences</MenuItem>
+        <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+      </Menu>
+    </>
   );
 }

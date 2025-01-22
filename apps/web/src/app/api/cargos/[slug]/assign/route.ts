@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "rc/lib/db";
+import { SlugParams } from "rc/types/api";
 import { getUserFromServerSession, responseError } from "rc/utils/api.utils";
 
 /**
@@ -41,10 +42,7 @@ import { getUserFromServerSession, responseError } from "rc/utils/api.utils";
  *         description: Internal server error
  */
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function POST(request: NextRequest, { params }: SlugParams) {
   try {
     const { slug: cargoIdFromUrl } = await params;
 

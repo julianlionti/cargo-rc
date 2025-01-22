@@ -103,6 +103,10 @@ model Driver {
 
   assignedCargos  Cargo[] @relation("AssignedTo") // Cargos assigned to the driver
   requestedCargos Cargo[] @relation("RequestedBy") // Cargos requested by the driver
+
+  lastKnownLat     Float? // Latitude of the last known location
+  lastKnownLng     Float? // Longitude of the last known location
+  lastLocationTime DateTime? // Timestamp of the last location update
 }
 
 model Payment {

@@ -48,7 +48,7 @@ export default function StaticMap({
 
   return (
     <Image
-      priority={false}
+      priority
       width={width}
       height={height}
       alt="map"

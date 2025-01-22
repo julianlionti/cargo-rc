@@ -3,6 +3,7 @@ import { CargoSchema } from "@utils/dist";
 import { Console } from "console";
 import { NextResponse } from "next/server";
 import { db } from "rc/lib/db";
+import { SlugParams } from "rc/types/api";
 import { responseError } from "rc/utils/api.utils";
 
 /**
@@ -203,10 +204,7 @@ import { responseError } from "rc/utils/api.utils";
  *                   description: Error message
  */
 
-export async function GET(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function GET(request: Request, { params }: SlugParams) {
   try {
     const slug = (await params).slug;
     const cargo = await db.cargo.findUnique({ where: { id: slug } });
@@ -218,10 +216,7 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function PUT(request: Request, { params }: SlugParams) {
   try {
     const { slug } = await params;
     const { id, ...data }: CargoSchema = await request.json();
@@ -239,10 +234,7 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ slug: string }> }
-) {
+export async function DELETE(request: Request, { params }: SlugParams) {
   try {
     const slug = (await params).slug;
 
