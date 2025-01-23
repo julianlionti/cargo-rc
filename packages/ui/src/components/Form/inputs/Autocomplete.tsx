@@ -61,7 +61,7 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
       name={id}
       control={control}
       defaultValue={null as PathValue<T, Path<T>>}
-      render={({ field, fieldState }) => (
+      render={({ field, fieldState, formState }) => (
         <MuiAutocomplete
           {...field}
           filterOptions={(e) => e}
@@ -81,7 +81,7 @@ export default function Autocomplete<T extends FieldValues, O extends Option>({
           }}
           isOptionEqualToValue={(option) => option.id === field.value}
           fullWidth
-          disabled={field.disabled || isDisabled}
+          disabled={field.disabled || isDisabled || formState.isSubmitting}
           options={finalOptions}
           getOptionLabel={(option) => option.name || option.id}
           renderInput={(textFieldProps) => (

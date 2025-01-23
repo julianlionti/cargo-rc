@@ -43,7 +43,7 @@ export default function Dropdown<T extends FieldValues>({
       name={id}
       control={control}
       defaultValue={"" as PathValue<T, Path<T>>}
-      render={({ field, fieldState }) => (
+      render={({ field, fieldState, formState }) => (
         <FormControl fullWidth error={!!fieldState.error}>
           {label && <InputLabel id={`${id}-label`}>{label}</InputLabel>}
           <Select
@@ -59,7 +59,7 @@ export default function Dropdown<T extends FieldValues>({
             }}
             labelId={`${id}-label`}
             label={label}
-            disabled={field.disabled || isDisabled}
+            disabled={field.disabled || isDisabled || formState.isSubmitting}
           >
             <MenuItem value="">
               <em>None</em>

@@ -9,7 +9,7 @@ export default function useUser() {
 
   const [userDb, getUserInfo, isLoadingUser] = useActionState(async () => {
     if (!user) return null;
-    const dbUser = await fetchApi<User>(`api/user/${user.id}`);
+    const dbUser = await fetchApi<User>(`/api/user/${user.id}`);
     return dbUser;
   }, null);
 

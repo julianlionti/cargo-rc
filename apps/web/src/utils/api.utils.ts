@@ -25,3 +25,16 @@ export async function getUserFromServerSession() {
   if (!userData) throw Error("No user");
   return userData;
 }
+
+export async function getDriverFromServerSession() {
+  const serverSession = await getServerSession(authOptions);
+  if (!serverSession) throw Error("No serve session");
+  const { user } = serverSession;
+  const { id: uid } = user;
+
+  const userData = await db.user.findUnique({ where: { uid } });
+  if (!userData) throw Error("No user");
+
+  const driver = await db.driver.findUnique({ where: { userId: userData.id } });
+  return { driver, user: userData };
+}

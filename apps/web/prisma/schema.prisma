@@ -9,7 +9,7 @@ datasource db {
 
 enum CargoStatus {
   AVAILABLE
-  PENDING // When a driver selects the cargo, awaiting company approval
+  PENDING
   PICKED_UP
   IN_TRANSIT
   DELIVERED
@@ -28,47 +28,57 @@ enum CargoUrgency {
   HIGH
 }
 
+enum UserRole {
+  ADMIN
+  COMPANY_USER
+  COMPANY_ADMIN
+  DRIVER
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
 model Cargo {
   id          String       @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   origin      String
   destination String
   weight      Float
-  reward      Float // Reward for completing the delivery
-  size        CargoSize // Enum for size (small, medium, large)
-  urgency     CargoUrgency // Enum for urgency (low, medium, high)
+  reward      Float
+  size        CargoSize
+  urgency     CargoUrgency
 
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?  @db.ObjectId
 
-  originLat      Float // Latitude for the origin location
-  originLng      Float // Longitude for the origin location
-  destinationLat Float // Latitude for the destination location
-  destinationLng Float // Longitude for the destination location
+  originLat      Float
+  originLng      Float
+  destinationLat Float
+  destinationLng Float
 
   distanceAprox Float @default(0)
 
   deliveryDateTime DateTime @default(now())
 
-  assignedTo   Driver? @relation("AssignedTo", fields: [assignedToId], references: [id]) // Assigned driver
+  assignedTo   Driver? @relation("AssignedTo", fields: [assignedToId], references: [id])
   assignedToId String? @db.ObjectId
 
-  requestedBy   Driver? @relation("RequestedBy", fields: [requestedById], references: [id]) // Driver requesting cargo
+  requestedBy   Driver? @relation("RequestedBy", fields: [requestedById], references: [id])
   requestedById String? @db.ObjectId
 
-  requestedAt DateTime? // Timestamp when the cargo was requested
-  approvedAt  DateTime? // Timestamp when the request was approved
-
-  status  CargoStatus // Enum for cargo status
-  Payment Payment[] // Payment records related to the cargo
+  status  CargoStatus
+  Payment Payment[]
 }
 
 model Company {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
   name   String
   email  String  @unique
-  cargos Cargo[] // Cargos listed by the company
-  users  User[] // Users associated with the company
+  cargos Cargo[]
+  users  User[]
 }
 
 model User {
@@ -76,20 +86,18 @@ model User {
   name      String
   email     String   @unique
   uid       String   @unique
-  role      UserRole // Enum for the user's role
+  role      UserRole
   company   Company? @relation(fields: [companyId], references: [id])
   companyId String?  @db.ObjectId
 
+  firstName   String?
+  lastName    String?
+  phoneNumber String?
+  bornDate    DateTime?
+
   Payment      Payment[]
   Notification Notification[]
-  Driver       Driver[] // If the user is also a driver, link to the Driver model
-}
-
-enum UserRole {
-  ADMIN
-  COMPANY_USER // General user role for companies
-  COMPANY_ADMIN // Admin role for companies
-  DRIVER
+  Driver       Driver?
 }
 
 model Driver {
@@ -97,16 +105,17 @@ model Driver {
   user   User   @relation(fields: [userId], references: [id])
   userId String @unique @db.ObjectId
 
-  licenseNumber  String // Driver's license number
-  vehicleDetails String? // Information about the driver's vehicle
-  certifications String[] // Any certifications the driver holds
+  licenseNumber   String?
+  vehicleDetails  String?
+  certifications  String[]
+  experienceYears Int?
 
-  assignedCargos  Cargo[] @relation("AssignedTo") // Cargos assigned to the driver
-  requestedCargos Cargo[] @relation("RequestedBy") // Cargos requested by the driver
+  assignedCargos  Cargo[] @relation("AssignedTo")
+  requestedCargos Cargo[] @relation("RequestedBy")
 
-  lastKnownLat     Float? // Latitude of the last known location
-  lastKnownLng     Float? // Longitude of the last known location
-  lastLocationTime DateTime? // Timestamp of the last location update
+  lastKnownLat     Float?
+  lastKnownLng     Float?
+  lastLocationTime DateTime?
 }
 
 model Payment {
@@ -118,12 +127,6 @@ model Payment {
   initiatedBy   User          @relation(fields: [initiatedById], references: [id])
   initiatedById String        @db.ObjectId
   createdAt     DateTime      @default(now())
-}
-
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  FAILED
 }
 
 model Notification {

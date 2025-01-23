@@ -26,10 +26,14 @@ export default function NumberInput<T extends FieldValues>({
       name={id}
       control={control}
       defaultValue={null as PathValue<T, Path<T>>}
-      render={({ field: { onChange, ...restField }, fieldState }) => (
+      render={({
+        field: { onChange, ...restField },
+        fieldState,
+        formState,
+      }) => (
         <NumericFormat
           {...restField}
-          disabled={restField.disabled || isDisabled}
+          disabled={restField.disabled || isDisabled || formState.isSubmitting}
           fullWidth
           error={!!fieldState.error}
           onValueChange={({ floatValue }) => {

@@ -25,10 +25,10 @@ export default function TimeInput<T extends FieldValues>({
       name={id}
       control={control}
       defaultValue={null as PathValue<T, Path<T>>}
-      render={({ field, fieldState }) => (
+      render={({ field, fieldState, formState }) => (
         <TimePicker
           {...field}
-          disabled={field.disabled || isDisabled}
+          disabled={field.disabled || isDisabled || formState.isSubmitting}
           onChange={dateOnChange(field)}
           value={dateValue(field)}
           slotProps={{ textField: { error: !!fieldState.error, label } }}

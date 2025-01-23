@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { DriverSchema } from "@utils";
 import { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { db } from "rc/lib/db";
-import { responseError } from "rc/utils/api.utils";
+import { getUserFromServerSession, responseError } from "rc/utils/api.utils";
+import authOptions from "rc/utils/auth.utils";
 
 /**
  * @swagger
@@ -78,6 +81,44 @@ export async function GET(request: Request) {
       include: { assignedCargos: true },
     });
     return NextResponse.json(drivers);
+  } catch (error) {
+    return responseError("Failed to fetch drivers");
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const { id } = await getUserFromServerSession();
+    const driver = (await request.json()) as DriverSchema;
+    const {
+      licenseNumber,
+      bornDate,
+      email,
+      experienceYears,
+      firstName,
+      lastName,
+      phoneNumber,
+    } = driver;
+
+    await db.user.update({
+      where: { id },
+      data: { bornDate, email, firstName, lastName, phoneNumber },
+    });
+
+    const updated = await db.driver.upsert({
+      where: { userId: id },
+      create: {
+        userId: id,
+        licenseNumber,
+        experienceYears,
+      },
+      update: {
+        licenseNumber,
+        experienceYears,
+      },
+    });
+
+    return NextResponse.json(updated);
   } catch (error) {
     return responseError("Failed to fetch drivers");
   }
